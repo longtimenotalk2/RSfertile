@@ -1,0 +1,5 @@
+/target
+/.replit
+/.cache
+/.upm
+replit.nix
