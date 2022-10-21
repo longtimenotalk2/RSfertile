@@ -1,5 +1,5 @@
 use super::Board;
-use super::board_find::{Pos, Dir};
+use super::map::map_find::{Pos, Dir};
 use super::tile::Tile;
 use super::tile::entity::{Terrian, Landform, Building};
 use crate::constant::*;
@@ -48,11 +48,11 @@ impl King {
 
 impl Board {
     pub fn king_tile(&self) -> &Tile {
-        self.tile(self.king.get_pos())
+        self.map.tile(self.king.get_pos())
     }
     
     pub fn king_tile_mut(&mut self) -> &mut Tile {
-        self.tile_mut(&self.king.get_pos().clone())
+        self.map.tile_mut(&self.king.get_pos().clone())
     }
     
     pub fn king_can_move(&self, dir : &Dir) -> bool {
@@ -66,7 +66,7 @@ impl Board {
             let cpcost : i64 = (mvcost*100.) as i64;
             self.pass_cp(cpcost);
             //move 
-            let p = self.find_dir(self.king.get_pos(), dir).unwrap();
+            let p = self.map.find_dir(self.king.get_pos(), dir).unwrap();
             self.king.set_pos(&p);
         }else{
             panic!("Invalid move")
@@ -74,7 +74,7 @@ impl Board {
     }
 
     pub fn king_can_pick(&self) -> bool {
-        self.tile(&self.king.get_pos()).can_pick()
+        self.map.tile(&self.king.get_pos()).can_pick()
     }
 
     pub fn king_exe_pick(&mut self) {
@@ -95,7 +95,7 @@ impl Board {
     }
 
     pub fn king_can_found(&self) -> bool {
-        self.tile(self.king.get_pos()).can_found()
+        self.map.tile(self.king.get_pos()).can_found()
     }
 
     pub fn king_exe_found(&mut self, building : Building) {
@@ -109,7 +109,7 @@ impl Board {
     }
 
     pub fn king_can_build(&self) -> bool {
-        self.tile(self.king.get_pos()).can_build() && self.king.get_food() > 0 && self.king.get_wood() > 0
+        self.map.tile(self.king.get_pos()).can_build() && self.king.get_food() > 0 && self.king.get_wood() > 0
     }
 
     pub fn king_exe_build(&mut self) {

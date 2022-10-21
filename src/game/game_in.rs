@@ -1,5 +1,5 @@
 use super::Game;
-use super::board::board_find::Dir;
+use super::board::map::map_find::Dir;
 use super::board::tile::entity::Building;
 use std::io;
 

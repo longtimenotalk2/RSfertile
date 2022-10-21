@@ -1,4 +1,4 @@
-use super::Board;
+use super::Map;
 
 pub enum Dir{
     R,
@@ -37,7 +37,7 @@ impl Pos {
     }
 }
 
-impl Board {
+impl Map {
     pub fn valid(&self, pos : &Pos) -> bool {
         let (r, c) = (pos.r, pos.c);
         if r >= 0 && r < self.n_row && c >= 0 && c < self.n_col {true} else {false}
