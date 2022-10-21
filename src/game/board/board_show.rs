@@ -22,7 +22,7 @@ impl Board {
         for (i, pos) in self.hovels_pos.iter().enumerate() {
             match self.map.tile(&pos).get_building() {
                 Building::Hovel => (
-                    println!("Hovel_{} ({}, {}) : power = {}", i, pos.get().0, pos.get().1, self.get_power(pos))
+                    println!("Hovel_{} ({}, {}) : power = {}", i, pos.get().0, pos.get().1, self.map.get_power(pos))
                 ),
                 _ => panic!("Hovel position mismatch!"),
             }
