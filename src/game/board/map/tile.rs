@@ -1,13 +1,12 @@
 pub mod entity;
-use entity::{Building, Landform, Terrian};
+use entity::{Terrian, Placement};
 use crate::constant::*;
 
 
 #[derive(Clone)]
 pub struct Tile {
     terrian: Terrian,
-    landform: Landform,
-    building: Building,
+    placement: Placement,
     supply: bool,
 }
 
@@ -15,8 +14,7 @@ impl Tile {
     pub fn new() -> Self {
         Self {
             terrian: Terrian::Plain,
-            landform: Landform::Void,
-            building: Building::Void,
+            placement: Placement::Void,
             supply: true,
         }
     }
@@ -25,59 +23,29 @@ impl Tile {
         &self.terrian
     }
 
-    pub fn get_landform(&self) -> &Landform {
-        &self.landform
-    }
-
-    pub fn get_building(&self) -> &Building {
-        &self.building
+    pub fn get_placement(&self) -> &Placement {
+        &self.placement
     }
 
     pub fn mvcost(&self) -> f64 {
-        let mut mvcost : f64 = match self.get_terrian() {
-            Terrian::Plain => MVCOST_PLAIN,
-            Terrian::Hill => MVCOST_HILL,
-            Terrian::Sea => panic!("Can not get Sea's mvcost"),
-        };
-        mvcost += match self.landform {
-            Landform::Void => 0.,
-            Landform::Tree => MVCOST_TREE,
-        };
-        mvcost
+        self.terrian.mvcost() + self.placement.mvcost()
     }
 
-    pub fn can_step(&self) -> bool {
-        match self.terrian {
-            Terrian::Sea => false,
-            _ => true,
+    pub fn can_step(&self) -> Result<(), &str> {
+        self.terrian.can_step()
+    }
+
+    pub fn can_found(&self) -> Result<(), &str> {
+        match self.terrian.can_found() {
+            Err(e) => Err(e),
+            Ok(_) => self.placement.can_found(),
         }
     }
 
-    pub fn can_found(&self) -> bool {
-        if self.can_step() {
-            match self.landform {
-                Landform::Tree => false,
-                _ => {
-                    match self.building {
-                        Building::Void => true,
-                        Building::Farm => true,
-                        _ => false,
-                    }
-                }
-            }
-        }else{
-            false
-        }
-    }
-
-    pub fn can_sow(&self) -> bool {
-        if self.can_found() {
-            match self.building {
-                Building::Void => true,
-                _ => false,
-            }
-        }else{
-            false
+    pub fn can_sow(&self) -> Result<(), &str> {
+        match self.terrian.can_sow() {
+            Err(e) => Err(e),
+            Ok(_) => self.placement.can_sow(),
         }
     }
 

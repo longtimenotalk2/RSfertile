@@ -10,51 +10,97 @@ pub enum Terrian {
     Hill,
 }
 
-#[derive(Clone)]
-pub enum Landform {
-    Void,
-    Tree,
+impl Terrian {
+    pub fn mvcost(&self) -> f64 {
+        match self {
+            Terrian::Plain => MVCOST_PLAIN,
+            Terrian::Hill => MVCOST_HILL,
+            Terrian::Sea => panic!("Can not get Sea's mvcost"),
+        }
+    }
+
+    pub fn can_step(&self) -> Result<(), &str> {
+        match self {
+            Terrian::Sea => Err("Can not step on the Sea tile."),
+            _ => Ok(()),
+        }
+    }
+
+    pub fn can_found(&self) -> Result<(), &str> {
+        match self {
+            Terrian::Sea => Err("Can not found on the Sea tile."),
+            _ => Ok(()),
+        }
+    }
+
+    pub fn can_sow(&self) -> Result<(), &str> {
+        match self {
+            Terrian::Sea => Err("Can not sow on the Sea tile."),
+            _ => Ok(()),
+        }
+    }
 }
 
 #[derive(Clone)]
-pub enum Building {
-    Void,
-    Foundation(Box<(Building, i64)>),
+pub enum Natural {
+    Tree,
     Farm,
+}
+
+impl Natural {
+    pub fn mvcost(&self) -> f64 {
+        match self {
+            Natural::Tree => MVCOST_TREE,
+            _ => 0.,
+        }
+    }
+}
+
+#[derive(Clone)]
+pub enum Manmade {
     Hovel,
 }
 
-impl Building {
-    pub fn remained_mount(&self) -> i64 {
+#[derive(Clone)]
+pub enum Placement {
+    Void,
+    Landform(Natural),
+    Building(Manmade),
+    Foundation(Manmade, i64),
+}
+
+impl Placement {
+    pub fn mvcost(&self) -> f64 {
         match self {
-            Building::Foundation(f) => match f.0 {
-                Building::Hovel => MOUNT_HOVEL - f.1, 
-                _ => 0,
-            }
-            _ => 0,
+            Placement::Landform(n) => n.mvcost(),
+            _ => 0.
         }
     }
 
-    pub(super) fn build(&mut self, mount : i64) -> bool {
-        let diff = mount - self.remained_mount();
+    pub fn can_found(&self) -> Result<(), &str> {
         match self {
-            Building::Foundation(f) => {
-                match diff {
-                    diff if diff > 0 => panic!("mount over"),
-                    diff if diff == 0 => {
-                        *self = f.0.clone();
-                        true
-                    },
-                    _ => {
-                        *self = Building::Foundation(Box::new((f.0.clone(), f.1 + mount)));
-                        false
-                    },
-                }
-            },
-            _ => panic!("Can not build on not foundation")
+            Placement::Void => Ok(()),
+            Placement::Landform(natural) => match natural {
+                Natural::Tree => Err("Can not found on a tile with Tree."),
+                Natural::Farm => Ok(()),
+            }
+            Placement::Building(_) => Err("Can not found on a Building."),
+            Placement::Foundation(..) => Err("Can not found on a Foundation.")
+        }
+    }
+
+    pub fn can_sow(&self) -> Result<(), &str> {
+        match self {
+            Placement::Void => Ok(()),
+            Placement::Landform(_) => Err("Can sow sow on a tile with Natural"),
+            Placement::Building(_) => Err("Can not sow on a Building."),
+            Placement::Foundation(..) => Err("Can not sow on a Foundation.")
         }
     }
 }
+
+
+
 
         
 
