@@ -1,10 +1,11 @@
+pub mod tile;
 pub mod map_find;
 pub mod map_basic;
 pub mod map_show;
 pub mod map_hovel;
 pub mod map_action;
 
-use super::tile::Tile;
+use super::map::tile::Tile;
 
 #[derive(Clone)]
 pub struct Map {

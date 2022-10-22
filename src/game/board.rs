@@ -1,4 +1,3 @@
-pub mod tile;
 pub mod map;
 mod board_action;
 mod board_show;
@@ -7,7 +6,7 @@ mod board_turn;
 mod board_hovel;
 mod board_king;
 
-use tile::Tile;
+use map::tile::Tile;
 use map::Map;
 use board_king::King;
 use map::map_find::Pos;

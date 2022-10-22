@@ -134,11 +134,11 @@ impl Tile {
         }
     }
 
-    pub(super) fn set_terrian(&mut self, terrian: Terrian) {
+    pub fn set_terrian(&mut self, terrian: Terrian) {
         self.terrian = terrian;
     }
 
-    pub(super) fn set_landform(&mut self, landform: Landform) {
+    pub fn set_landform(&mut self, landform: Landform) {
         self.landform = landform;
     }
 

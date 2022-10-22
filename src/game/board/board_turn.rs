@@ -1,5 +1,5 @@
 use super::Board;
-use super::tile::entity::Building;
+use super::map::tile::entity::Building;
 use crate::constant::*;
 
 impl Board {

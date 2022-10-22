@@ -1,5 +1,5 @@
 use super::Board;
-use super::tile::entity::Building;
+use super::map::tile::entity::Building;
 use super::map::map_find::Pos;
 
 impl Board {

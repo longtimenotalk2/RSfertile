@@ -1,6 +1,6 @@
 use super::Map;
-use super::super::tile::Tile;
-use super::super::tile::entity::{Building, Terrian, Landform};
+use super::tile::Tile;
+use super::tile::entity::{Building, Terrian, Landform};
 use super::map_find::{Pos, Dir};
 
 

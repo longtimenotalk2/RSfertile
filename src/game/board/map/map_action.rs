@@ -1,4 +1,4 @@
-use super::super::tile::entity::{Building, Landform, Terrian};
+use super::tile::entity::{Building, Landform, Terrian};
 use super::map_find::{Dir, Pos};
 use super::Map;
 

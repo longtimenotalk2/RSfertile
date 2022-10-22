@@ -1,5 +1,5 @@
 use super::Map;
-use super::super::tile::entity::Building;
+use super::tile::entity::Building;
 use super::map_find::Pos;
 
 impl Map {

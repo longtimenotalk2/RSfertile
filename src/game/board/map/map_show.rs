@@ -1,5 +1,5 @@
 use super::Map;
-use super::super::tile::entity::{Terrian, Landform, Building};
+use super::tile::entity::{Terrian, Landform, Building};
 use crate::constant::*;
 use super::map_find::Pos;
 

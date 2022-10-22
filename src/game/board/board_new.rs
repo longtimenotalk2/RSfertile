@@ -1,9 +1,9 @@
 use super::Board;
 use super::map::Map;
 
-use super::tile::Tile;
+use super::map::tile::Tile;
 use super::board_king::King;
-use super::tile::entity::{Terrian, Landform, Building};
+use super::map::tile::entity::{Terrian, Landform, Building};
 use super::map::map_find::Pos;
 
 impl Board {
