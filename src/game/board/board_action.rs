@@ -33,12 +33,12 @@ impl Board {
         }
     }
 
-    pub fn found(&mut self, pos : &Pos, building : Building) {
-        self.map.tile_mut(pos).found(building);
+    pub fn found(&mut self, pos: &Pos, building: Building) {
+        self.map.found(pos, building);
     }
 
-    pub fn build(&mut self, pos: &Pos, mount : i64) {
-        let is_finish = self.map.tile_mut(pos).build(mount);
+    pub fn build(&mut self, pos: &Pos, mount: i64) {
+        let is_finish = self.map.build(pos, mount);
         if is_finish {
             match self.map.tile(pos).get_building() {
                 Building::Hovel => self.add_hovel_to_list(pos),

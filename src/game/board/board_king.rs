@@ -52,7 +52,7 @@ impl Board {
     }
     
     pub fn king_tile_mut(&mut self) -> &mut Tile {
-        self.map.tile_mut(&self.king.get_pos().clone())
+        self.map.tile_mut(&self.king.get_pos())
     }
     
     pub fn king_can_move(&self, dir : &Dir) -> bool {
@@ -79,7 +79,7 @@ impl Board {
 
     pub fn king_exe_pick(&mut self) {
         if self.king_can_pick() {
-            let mut tile = self.king_tile().clone();
+            let mut tile = self.king_tile();
             match tile.get_landform() {
                 Landform::Tree => self.king.wood += 1,
                 _ => match tile.get_building() {
