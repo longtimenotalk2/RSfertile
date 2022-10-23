@@ -86,8 +86,4 @@ impl Map {
             vec!()
         }
     }
-    
-    pub(super) fn num_adjs(&self, pos : &Pos) -> u32 {
-        self.find_adjs(pos).len().try_into().unwrap()
-    }
 }

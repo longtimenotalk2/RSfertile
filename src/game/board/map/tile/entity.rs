@@ -9,7 +9,7 @@ pub enum Terrian {
 }
 
 impl Terrian {
-    pub fn mvcost(&self) -> f64 {
+    pub(super) fn mvcost(&self) -> f64 {
         match self {
             Terrian::Plain => MVCOST_PLAIN,
             Terrian::Hill => MVCOST_HILL,
@@ -17,21 +17,21 @@ impl Terrian {
         }
     }
 
-    pub fn can_step(&self) -> Result<(), &str> {
+    pub(super) fn can_step(&self) -> Result<(), &str> {
         match self {
             Terrian::Sea => Err("Can not step on the Sea tile."),
             _ => Ok(()),
         }
     }
 
-    pub fn can_found(&self) -> Result<(), &str> {
+    pub(super) fn can_found(&self) -> Result<(), &str> {
         match self {
             Terrian::Sea => Err("Can not found on the Sea tile."),
             _ => Ok(()),
         }
     }
 
-    pub fn can_sow(&self) -> Result<(), &str> {
+    pub(super) fn can_sow(&self) -> Result<(), &str> {
         match self {
             Terrian::Sea => Err("Can not sow on the Sea tile."),
             _ => Ok(()),
@@ -46,7 +46,7 @@ pub enum Natural {
 }
 
 impl Natural {
-    pub fn mvcost(&self) -> f64 {
+    pub(super) fn mvcost(&self) -> f64 {
         match self {
             Natural::Tree => MVCOST_TREE,
             _ => 0.,
@@ -60,7 +60,7 @@ pub enum Manmade {
 }
 
 impl Manmade {
-    pub fn max_process(&self) -> i64 {
+    pub(super) fn max_process(&self) -> i64 {
         match self {
             Manmade::Hovel => PROCESS_HOVEL
         }
@@ -76,14 +76,49 @@ pub enum Placement {
 }
 
 impl Placement {
-    pub fn mvcost(&self) -> f64 {
+    pub(super) fn is_hovel(&self) -> bool {
+        match self {
+            Placement::Building(m) => {
+                match m {
+                    Manmade::Hovel => true,
+                    _ => false,
+                }
+            },
+            _ => false,
+        }
+    }
+
+    fn remained_process(&self) -> i64 {
+        match self {
+            Placement::Foundation(m, p) => {
+                if p < 0 {
+                    panic!("Should not has minus process")
+                }
+                let rp = m.max_process() - p;
+                if rp < 0 {
+                    panic!("Should not get minus remained process")
+                }
+                rp
+            },
+            _ => panic!("Should not cal remained process on Non Foundation")
+        }
+    }
+
+    pub fn get_process(&self) -> Option<i64> {
+        match self {
+            Placement::Foundation(m, p) => Some(p),
+            _ => None
+        }
+    }
+    
+    pub(super) fn mvcost(&self) -> f64 {
         match self {
             Placement::Landform(n) => n.mvcost(),
             _ => 0.,
         }
     }
 
-    pub fn can_found(&self) -> Result<(), &str> {
+    pub(super) fn can_found(&self) -> Result<(), &str> {
         match self {
             Placement::Void => Ok(()),
             Placement::Landform(natural) => match natural {
@@ -105,7 +140,7 @@ impl Placement {
         }
     }
 
-    pub fn can_sow(&self) -> Result<(), &str> {
+    pub(super) fn can_sow(&self) -> Result<(), &str> {
         match self {
             Placement::Void => Ok(()),
             Placement::Landform(_) => Err("Can sow sow on a tile with Natural"),
@@ -114,7 +149,17 @@ impl Placement {
         }
     }
 
-    pub fn can_build(&self) -> Result<(), &str> {
+    pub fn sow(&mut self) -> Result<(), &str> {
+        match self.can_sow() {
+            Err(s) => Err(s),
+            Ok(()) => {
+                *self = Placement::Landform(Natural::Farm);
+                Ok(())
+            }
+        }
+    }
+
+    pub(super) fn can_build(&self) -> Result<(), &str> {
         match self {
             Placement::Foundation(_) => Ok(()),
             _ => Err("Can only build on Foundation"),
@@ -141,7 +186,7 @@ impl Placement {
         }
     }
 
-    pub fn can_pick_food(&self) -> bool {
+    pub(super) fn can_produce_food(&self) -> bool {
         match self {
             Placement::Landform(n) => {
                 match n {
@@ -153,7 +198,7 @@ impl Placement {
         }
     }
 
-    pub fn can_pick_wood(&self) -> bool {
+    pub(super) fn can_produce_wood(&self) -> bool {
         match self {
             Placement::Landform(n) => {
                 match n {
@@ -167,22 +212,6 @@ impl Placement {
 
     pub(super) fn set_natural(&mut self, natural : Natural) {
         *self = Placement::Landform(nature);
-    }
-
-    fn remained_process(&self) -> i64 {
-        match self {
-            Placement::Foundation(m, p) => {
-                if p < 0 {
-                    panic!("Should not has minus process")
-                }
-                let rp = m.max_process() - p;
-                if rp < 0 {
-                    panic!("Should not get minus remained process")
-                }
-                rp
-            },
-            _ => panic!("Should not cal remained process on Non Foundation")
-        }
     }
 
     

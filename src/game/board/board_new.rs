@@ -3,7 +3,7 @@ use super::map::Map;
 
 use super::map::tile::Tile;
 use super::board_king::King;
-use super::map::tile::entity::{Terrian, Landform, Building};
+use super::map::tile::entity::{Terrian, Natural};
 use super::map::map_find::Pos;
 
 impl Board {
@@ -21,12 +21,10 @@ impl Board {
         let mut b = Board::new(4, 6);
         b.set_terrian(&Pos::new(2, 2), Terrian::Sea);
         b.set_terrian(&Pos::new(0, 3), Terrian::Hill);
-        b.set_landform(&Pos::new(0, 2), Landform::Tree);
-        b.set_landform(&Pos::new(1, 5), Landform::Tree);
-        b.set_landform(&Pos::new(2, 5), Landform::Tree);
-        b.set_landform(&Pos::new(3, 5), Landform::Tree);
-        b.found(&Pos::new(1, 1), Building::Hovel);
-        b.build(&Pos::new(1, 1), 5);
+        b.set_natural(&Pos::new(0, 2), Landform::Tree);
+        b.set_natural(&Pos::new(1, 5), Landform::Tree);
+        b.set_natural(&Pos::new(2, 5), Landform::Tree);
+        b.set_natural(&Pos::new(3, 5), Landform::Tree);
        
         b
     }

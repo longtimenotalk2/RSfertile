@@ -14,7 +14,6 @@ use map::map_find::Pos;
 #[derive(Clone)]
 pub struct Board {
     map : Map,
-    hovels_pos : Vec<Pos>,
     turn: i64,
     cp: i64,
     king : King,

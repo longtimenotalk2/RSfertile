@@ -27,6 +27,14 @@ impl Tile {
         &self.placement
     }
 
+    pub fn get_process(&self) -> Option<i64> {
+        self.placement.get_process()
+    }
+
+    pub fn is_hovel(&self) -> bool {
+        self.placement.is_hovel()
+    }
+
     pub fn mvcost(&self) -> f64 {
         self.terrian.mvcost() + self.placement.mvcost()
     }
@@ -44,11 +52,8 @@ impl Tile {
 
     pub fn found(&mut self, manmade : Manmade) -> Result<(), &str> {
         match self.can_found() {
-            Err(s) => Err(s),
-            Ok(()) => {
-                self.placement.found(manmade);
-                Ok(())
-            }
+            Err(e) => Err(e),
+            Ok(_) => self.placement.found(manmade),
         }
     }
 
@@ -60,12 +65,9 @@ impl Tile {
     }
 
     pub fn sow(&mut self) -> Result<(), &str> {
-        match self.can_sow() {
-            Err(s) => Err(s),
-            Ok(()) => {
-                self.set_natural(Natural::Farm);
-                Ok(())
-            }
+         match self.can_sow() {
+            Err(e) => Err(e),
+            Ok(_) => self.placement.sow(),
         }
     }
 
@@ -73,22 +75,20 @@ impl Tile {
         self.placement.can_build()
     }
 
-    pub fn build(&mut self) -> Result<(), &str> {
-        match self.can_build() {
-            Err(s) => Err(s),
-            Ok(()) => {
-                self.placement.build();
-                Ok(())
-            },
-        }
+    pub fn build(&mut self) -> Result<bool, &str> {
+        self.placement.build()
+    }
+
+    pub fn can_produce_food(&self) -> bool {
+        self.placement.can_produce_food()
     }
 
     pub fn can_pick_food(&self) -> bool {
-        self.placement.can_pick_food() && self.supply 
+        self.placement.can_produce_food() && self.supply 
     }
 
     pub fn can_pick_wood(&self) -> bool {
-        self.placement.can_pick_wood() && self.supply 
+        self.placement.can_produce_wood() && self.supply 
     }
 
     pub fn can_pick(&self) -> bool {
@@ -112,11 +112,11 @@ impl Tile {
         }
     }
 
-    pub fn set_terrian(&mut self, terrian: Terrian) {
+    pub(super) fn set_terrian(&mut self, terrian: Terrian) {
         self.terrian = terrian;
     }
 
-    pub fn set_natural(&mut self, natural: Natural) {
-        self.placement.set_natural(natural);
+    pub(super) fn set_placement(&mut self, placement: Placement) {
+        self.placement = placement;
     }
 }

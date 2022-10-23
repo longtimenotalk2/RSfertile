@@ -1,5 +1,4 @@
 use super::Board;
-use super::map::tile::entity::Building;
 use crate::constant::*;
 
 impl Board {
@@ -22,6 +21,4 @@ impl Board {
             self.start_turn();
         }
     }
-
-    
 }

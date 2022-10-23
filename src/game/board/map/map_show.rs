@@ -1,21 +1,80 @@
-use super::Map;
-use super::tile::entity::{Terrian, Landform, Building};
-use crate::constant::*;
 use super::map_find::Pos;
+use super::tile::entity::{Terrian, Placement, Natural, Manmade};
+use super::Map;
+use crate::constant::*;
 
 // https://fuhao.xiao84.com/86855.html
-// https://crates.io/crates/colorful 
+// https://crates.io/crates/colorful
 
-const RED : &str = "\u{1b}[31m";
-const GREEN : &str = "\u{1b}[32m";
-const UGREEN : &str = "\u{1b}[4;32m";
-const YELLOW : &str = "\u{1b}[33m";
-const UYELLOW : &str = "\u{1b}[4;33m";
-const BLUE : &str = "\u{1b}[34m";
-const RESET : &str = "\u{1b}[m";
+const RED: &str = "\u{1b}[31m";
+const GREEN: &str = "\u{1b}[32m";
+const UGREEN: &str = "\u{1b}[4;32m";
+const YELLOW: &str = "\u{1b}[33m";
+const UYELLOW: &str = "\u{1b}[4;33m";
+const BLUE: &str = "\u{1b}[34m";
+const RESET: &str = "\u{1b}[m";
 
 impl Map {
-    pub fn show_adv(&self, king_pos : &Pos) {
+    pub fn show_tile(&self, pos : &Pos, king_pos : &Pos) {
+        let tile = self.tile(&pos);
+        match tile.get_terrian() {
+            Terrian::Sea => print!("{}Sea{}", BLUE, RESET),
+            _ => {
+                // Left
+                match tile.get_terrian() {
+                    Terrian::Plain => print!(" "),
+                    Terrian::Sea => (),
+                    Terrian::Hill => print!("H"),
+                }
+                // Middle
+                if pos.eq(king_pos) {
+                    match tile.get_process() {
+                        Some(process) => print!("{}", process),
+                        None => print!("@"),
+                    }
+                }else{
+                    match tile.get_process() {
+                        Some(process) => print!("{}{}{}", RED, process, RESET),
+                        None => print!(" "),
+                    }
+                }
+                //Right
+                match tile.get_placement() {
+                    Placement::Void => print!(" "),
+                    Placement::Landform(n) => {
+                        match n {
+                            Natural::Tree => {
+                                if tile.get_supply() {
+                                    print!("{}T{}", GREEN, RESET)
+                                } else {
+                                    print!("{}T{}", UGREEN, RESET)
+                                }
+                            },
+                            Natural::Farm => {
+                                if tile.get_supply() {
+                                    print!("{}f{}", YELLOW, RESET)
+                                } else {
+                                    print!("{}f{}", UYELLOW, RESET)
+                                }
+                            },
+                        }
+                    },
+                    Placement::Building(m) => {
+                        match m {
+                            Manmade::Hovel => print!("h"),
+                        }
+                    },
+                    Placement::Foundation(m, process) => {
+                        match m {
+                            Manmade::Hovel => print!("{}h{}", RED, RESET)
+                        }
+                    },
+                }
+            }
+        }
+    }
+    
+    pub fn show_adv(&self, king_pos: &Pos) {
         // first line
         print!("┌───");
         for _col in 0..self.n_col - 1 {
@@ -33,59 +92,8 @@ impl Map {
             // other block
             for col in 0..self.n_col {
                 let pos = Pos::new(row, col);
-                let tile = self.tile(&pos);
-// Left: show terrian
-match tile.get_terrian() {
-    Terrian::Plain => print!(" "),
-    Terrian::Sea => print!("{}Sea{}", BLUE, RESET),
-    Terrian::Hill => print!("H"),
-};
-match tile.get_terrian() {
-    Terrian::Sea => (),
-    _ => {
-    // Middle: King
-                        
-    if pos.eq(king_pos) {
-        match tile.get_building() {
-            Building::Foundation(f) => print!("{}", f.1),
-            _ => print!("@"),
-        }
-    }else{
-        match tile.get_building() {
-            Building::Foundation(f) => print!("{}{}{}", RED, f.1, RESET),
-            _ => print!(" "),
-        }
-    }
-                
-    // Right: show building
-    match tile.get_building() {
-        Building::Void => {
-            match tile.get_landform(){
-                Landform::Tree => if tile.get_supply() {
-                    print!("{}T{}", GREEN, RESET)
-                }else{
-                    print!("{}T{}", UGREEN, RESET)
-                },
-                _ => print!(" "),
-            }
-        },
-        Building::Farm => if tile.get_supply() {
-            print!("{}f{}", YELLOW, RESET)
-        }else{
-            print!("{}f{}", UYELLOW, RESET)
-        },
-        Building::Hovel => print!("h"),
-        Building::Foundation(f) => {
-            match f.0 {
-Building::Foundation(_) => panic!("Foundation can not contain foundation"),
-Building::Hovel => print!("{}h{}", RED, RESET), 
-_ => print!(" "),
-}
-        }
-    };
-                    }
-                }
-                
+                // TILE BLOCK
+                self.show_tile(&pos, king_pos);
                 print!("│");
             }
             print!("\n");

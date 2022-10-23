@@ -1,6 +1,5 @@
 use super::Map;
 use super::tile::Tile;
-use super::tile::entity::{Building, Terrian, Landform};
 use super::map_find::{Pos, Dir};
 
 
@@ -9,14 +8,15 @@ impl Map {
         &self.tiles[pos.into_usize(self.n_col)]
     }
 
-    pub fn tile_mut(&mut self, pos : &Pos) -> &mut Tile {
+    pub(super) fn tile_mut(&mut self, pos : &Pos) -> &mut Tile {
         &mut self.tiles[pos.into_usize(self.n_col)]
     }
 
-    pub fn to_tiles (&self, positions : &[Pos]) -> Vec<&Tile> {
+    pub fn to_tiles(&self, positions : &[Pos]) -> Vec<&Tile> {
         positions.iter().map(|p| self.tile(&p)).collect()
     }
-        
 
-
+    pub fn adj_tiles(&self, pos : &Pos) -> Vec<&Tile> {
+        self.to_tiles(self.find_adjs(pos))
+    }
 }
