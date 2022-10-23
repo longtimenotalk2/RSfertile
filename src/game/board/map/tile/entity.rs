@@ -1,7 +1,5 @@
-
-
-use crate::constant::*;
 use super::Tile;
+use crate::constant::*;
 
 #[derive(Clone)]
 pub enum Terrian {
@@ -61,6 +59,14 @@ pub enum Manmade {
     Hovel,
 }
 
+impl Manmade {
+    pub fn max_process(&self) -> i64 {
+        match self {
+            Manmade::Hovel => PROCESS_HOVEL
+        }
+    }
+}
+
 #[derive(Clone)]
 pub enum Placement {
     Void,
@@ -73,7 +79,7 @@ impl Placement {
     pub fn mvcost(&self) -> f64 {
         match self {
             Placement::Landform(n) => n.mvcost(),
-            _ => 0.
+            _ => 0.,
         }
     }
 
@@ -83,9 +89,19 @@ impl Placement {
             Placement::Landform(natural) => match natural {
                 Natural::Tree => Err("Can not found on a tile with Tree."),
                 Natural::Farm => Ok(()),
-            }
+            },
             Placement::Building(_) => Err("Can not found on a Building."),
-            Placement::Foundation(..) => Err("Can not found on a Foundation.")
+            Placement::Foundation(..) => Err("Can not found on a Foundation."),
+        }
+    }
+
+    pub(super) fn found(&self, manmade : Manmade) -> Result<(), &str> {
+        match self.can_found() {
+            Err(s) => Err(s),
+            Ok(()) => {
+                *self = Placement::Foundation(manmade, 0);
+                Ok(())
+            }
         }
     }
 
@@ -94,14 +110,80 @@ impl Placement {
             Placement::Void => Ok(()),
             Placement::Landform(_) => Err("Can sow sow on a tile with Natural"),
             Placement::Building(_) => Err("Can not sow on a Building."),
-            Placement::Foundation(..) => Err("Can not sow on a Foundation.")
+            Placement::Foundation(..) => Err("Can not sow on a Foundation."),
         }
     }
+
+    pub fn can_build(&self) -> Result<(), &str> {
+        match self {
+            Placement::Foundation(_) => Ok(()),
+            _ => Err("Can only build on Foundation"),
+        }
+    }
+
+    pub(super) fn build(&mut self) -> Result<bool, &str> {
+        match self.can_build() {
+            Err(s) => Err(s),
+            Ok(_) => {
+                match self {
+                    Placement::Foundation(m, p) => {
+                        *p += 1;
+                        if self.remained_process() == 0 {
+                            *self = Placement::Building(*m);
+                            Ok(true)
+                        }else{
+                            Ok(false)
+                        }
+                    },
+                    _ => panic!("Should not build on Non Foundation")
+                }
+            }
+        }
+    }
+
+    pub fn can_pick_food(&self) -> bool {
+        match self {
+            Placement::Landform(n) => {
+                match n {
+                    Natural::Farm => true,
+                    _ => false,
+                }
+            },
+            _ => false,
+        }
+    }
+
+    pub fn can_pick_wood(&self) -> bool {
+        match self {
+            Placement::Landform(n) => {
+                match n {
+                    Natural::Tree => true,
+                    _ => false,
+                }
+            },
+            _ => false,
+        }
+    }
+
+    pub(super) fn set_natural(&mut self, natural : Natural) {
+        *self = Placement::Landform(nature);
+    }
+
+    fn remained_process(&self) -> i64 {
+        match self {
+            Placement::Foundation(m, p) => {
+                if p < 0 {
+                    panic!("Should not has minus process")
+                }
+                let rp = m.max_process() - p;
+                if rp < 0 {
+                    panic!("Should not get minus remained process")
+                }
+                rp
+            },
+            _ => panic!("Should not cal remained process on Non Foundation")
+        }
+    }
+
+    
 }
-
-
-
-
-        
-
-
