@@ -1,5 +1,5 @@
 use super::map_find::Pos;
-use super::tile::entity::{Terrian, Placement, Natural, Manmade};
+use super::tile::entity::{Manmade, Natural, Placement, Terrian};
 use super::Map;
 use crate::constant::*;
 
@@ -15,7 +15,7 @@ const BLUE: &str = "\u{1b}[34m";
 const RESET: &str = "\u{1b}[m";
 
 impl Map {
-    pub fn show_tile(&self, pos : &Pos, king_pos : &Pos) {
+    pub fn show_tile(&self, pos: &Pos, king_pos: &Pos) {
         let tile = self.tile(&pos);
         match tile.get_terrian() {
             Terrian::Sea => print!("{}Sea{}", BLUE, RESET),
@@ -32,7 +32,7 @@ impl Map {
                         Some(process) => print!("{}", process),
                         None => print!("@"),
                     }
-                }else{
+                } else {
                     match tile.get_process() {
                         Some(process) => print!("{}{}{}", RED, process, RESET),
                         None => print!(" "),
@@ -41,39 +41,33 @@ impl Map {
                 //Right
                 match tile.get_placement() {
                     Placement::Void => print!(" "),
-                    Placement::Landform(n) => {
-                        match n {
-                            Natural::Tree => {
-                                if tile.get_supply() {
-                                    print!("{}T{}", GREEN, RESET)
-                                } else {
-                                    print!("{}T{}", UGREEN, RESET)
-                                }
-                            },
-                            Natural::Farm => {
-                                if tile.get_supply() {
-                                    print!("{}f{}", YELLOW, RESET)
-                                } else {
-                                    print!("{}f{}", UYELLOW, RESET)
-                                }
-                            },
+                    Placement::Landform(n) => match n {
+                        Natural::Tree => {
+                            if tile.get_supply() {
+                                print!("{}T{}", GREEN, RESET)
+                            } else {
+                                print!("{}T{}", UGREEN, RESET)
+                            }
+                        }
+                        Natural::Farm => {
+                            if tile.get_supply() {
+                                print!("{}f{}", YELLOW, RESET)
+                            } else {
+                                print!("{}f{}", UYELLOW, RESET)
+                            }
                         }
                     },
-                    Placement::Building(m) => {
-                        match m {
-                            Manmade::Hovel => print!("h"),
-                        }
+                    Placement::Building(m) => match m {
+                        Manmade::Hovel => print!("h"),
                     },
-                    Placement::Foundation(m, process) => {
-                        match m {
-                            Manmade::Hovel => print!("{}h{}", RED, RESET)
-                        }
+                    Placement::Foundation(m, process) => match m {
+                        Manmade::Hovel => print!("{}h{}", RED, RESET),
                     },
                 }
             }
         }
     }
-    
+
     pub fn show_adv(&self, king_pos: &Pos) {
         // first line
         print!("┌───");
@@ -124,5 +118,16 @@ impl Map {
         }
         print!("┘");
         print!("\n");
+
+        // hovels
+        for (i, pos) in self.hovels_pos.iter().enumerate() {
+            println!(
+                "Hovel_{} ({}, {}) : power = {}",
+                i,
+                pos.get().0,
+                pos.get().1,
+                self.get_power(pos)
+            );
+        }
     }
 }

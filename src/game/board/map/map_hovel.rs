@@ -32,7 +32,15 @@ impl Map {
         }
     }
 
-    pub fn sow_from_hovels(&mut self) -> Result<i64, &str> {
+    pub fn get_all_power(&self) -> i64 {
+        let mut power : i64 = 0;
+        for pos in &self.hovels_pos {
+            power += self.get_power(pos);
+        }
+        power
+    }
+
+    pub fn sow_all(&mut self) -> Result<i64, &str> {
         let mut count : i64 = 0;
         for pos in self.hovels_pos.clone() {
             match self.sow_from_pos(pos) {

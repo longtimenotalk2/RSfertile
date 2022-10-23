@@ -1,7 +1,6 @@
 pub mod entity;
-use entity::{Terrian, Placement, Natural, Manmade};
 use crate::constant::*;
-
+use entity::{Manmade, Natural, Placement, Terrian, Resource};
 
 #[derive(Clone)]
 pub struct Tile {
@@ -31,16 +30,46 @@ impl Tile {
         self.placement.get_process()
     }
 
+    pub(super) fn set_terrian(&mut self, terrian: Terrian) {
+        self.terrian = terrian;
+    }
+
+    pub(super) fn set_placement(&mut self, placement: Placement) {
+        self.placement = placement;
+    }
+
     pub fn is_hovel(&self) -> bool {
         self.placement.is_hovel()
     }
 
-    pub fn mvcost(&self) -> f64 {
-        self.terrian.mvcost() + self.placement.mvcost()
+     pub fn get_supply(&self) -> bool {
+        self.supply
     }
+
+    pub fn refresh(&mut self) {
+        self.supply = true;
+    }
+
+    pub fn consume(&mut self) -> Result<(), &str> {
+        if self.supply {
+            self.supply = false;
+            Ok(())
+        } else {
+            Err("Can not consume a no supply tile")
+        }
+    }
+
+
 
     pub fn can_step(&self) -> Result<(), &str> {
         self.terrian.can_step()
+    }
+
+    pub fn mvcost(&self) -> Result<f64, &str> {
+        match self.can_step() {
+            Err(s) => Err(s),
+            Ok(_) => Ok(self.terrian.mvcost().expect("") + self.placement.mvcost().expect("")),
+        }
     }
 
     pub fn can_found(&self) -> Result<(), &str> {
@@ -50,7 +79,7 @@ impl Tile {
         }
     }
 
-    pub fn found(&mut self, manmade : Manmade) -> Result<(), &str> {
+    pub fn found(&mut self, manmade: Manmade) -> Result<(), &str> {
         match self.can_found() {
             Err(e) => Err(e),
             Ok(_) => self.placement.found(manmade),
@@ -65,7 +94,7 @@ impl Tile {
     }
 
     pub fn sow(&mut self) -> Result<(), &str> {
-         match self.can_sow() {
+        match self.can_sow() {
             Err(e) => Err(e),
             Ok(_) => self.placement.sow(),
         }
@@ -79,44 +108,33 @@ impl Tile {
         self.placement.build()
     }
 
-    pub fn can_produce_food(&self) -> bool {
-        self.placement.can_produce_food()
-    }
-
-    pub fn can_pick_food(&self) -> bool {
-        self.placement.can_produce_food() && self.supply 
-    }
-
-    pub fn can_pick_wood(&self) -> bool {
-        self.placement.can_produce_wood() && self.supply 
-    }
-
-    pub fn can_pick(&self) -> bool {
-        self.can_pick_food() || self.can_pick_wood()
-    }
-
-    pub fn get_supply(&self) -> bool {
-        self.supply
-    }
-
-    pub fn refresh(&mut self) {
-        self.supply = true;
-    }
-
-    pub fn consume(&mut self) -> Result<(), &str> {
-        if self.supply {
-            self.supply = false;
-            Ok(())
-        }else{
-            Err("Can not consume a no supply tile")
+    pub fn can_pick(&self) -> Result<(), &str> {
+        match self.placement.produce() {
+            None => Err("No resource can pick in this tile."),
+            Some(r) => {
+                if self.supply {
+                    Ok(())
+                }else{
+                    Err("This tile has been picked this turn.")
+                }
+            }
         }
     }
 
-    pub(super) fn set_terrian(&mut self, terrian: Terrian) {
-        self.terrian = terrian;
-    }
-
-    pub(super) fn set_placement(&mut self, placement: Placement) {
-        self.placement = placement;
+    pub fn pick(&mut self) -> Result<Resource, &str> {
+        match self.can_pick() {
+            Err(s) => Err(s),
+            Ok(_) => {
+                match self.placement.produce() {
+                    None => Err("No resource can pick in this tile."),
+                    Some(r) => {
+                        match self.consume() {
+                            Err(s1) => Err(s1),
+                            Ok(_) => Ok(r),
+                        }
+                    },
+                }
+            }
+        }
     }
 }

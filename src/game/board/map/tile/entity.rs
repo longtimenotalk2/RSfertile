@@ -9,11 +9,11 @@ pub enum Terrian {
 }
 
 impl Terrian {
-    pub(super) fn mvcost(&self) -> f64 {
+    pub(super) fn mvcost(&self) -> Result<f64, &str> {
         match self {
-            Terrian::Plain => MVCOST_PLAIN,
-            Terrian::Hill => MVCOST_HILL,
-            Terrian::Sea => panic!("Can not get Sea's mvcost"),
+            Terrian::Plain => Ok(MVCOST_PLAIN),
+            Terrian::Hill => Ok(MVCOST_HILL),
+            Terrian::Sea => Err("Can not get Sea's mvcost"),
         }
     }
 
@@ -46,12 +46,18 @@ pub enum Natural {
 }
 
 impl Natural {
-    pub(super) fn mvcost(&self) -> f64 {
+    pub(super) fn mvcost(&self) -> Result<f64, &str> {
         match self {
-            Natural::Tree => MVCOST_TREE,
-            _ => 0.,
+            Natural::Tree => Ok(MVCOST_TREE),
+            _ => Ok(0.),
         }
     }
+}
+
+#[derive(Clone)]
+pub enum Resource {
+    Food,
+    Wood,
 }
 
 #[derive(Clone)]
@@ -111,10 +117,10 @@ impl Placement {
         }
     }
     
-    pub(super) fn mvcost(&self) -> f64 {
+    pub(super) fn mvcost(&self) -> Result<f64, &str> {
         match self {
             Placement::Landform(n) => n.mvcost(),
-            _ => 0.,
+            _ => Ok(0.),
         }
     }
 
@@ -186,32 +192,21 @@ impl Placement {
         }
     }
 
-    pub(super) fn can_produce_food(&self) -> bool {
+    pub(super) fn produce(&self) -> Option<Resource> {
         match self {
-            Placement::Landform(n) => {
+            Placement::Landform(n)=> {
                 match n {
-                    Natural::Farm => true,
-                    _ => false,
+                    Natural::Farm => Some(Resource::Food),
+                    Natural::Tree => Some(Resource::Wood),
+                    _ => None,
                 }
             },
-            _ => false,
-        }
-    }
-
-    pub(super) fn can_produce_wood(&self) -> bool {
-        match self {
-            Placement::Landform(n) => {
-                match n {
-                    Natural::Tree => true,
-                    _ => false,
-                }
-            },
-            _ => false,
+            _ => None,
         }
     }
 
     pub(super) fn set_natural(&mut self, natural : Natural) {
-        *self = Placement::Landform(nature);
+        *self = Placement::Landform(naturel);
     }
 
     

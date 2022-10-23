@@ -1,15 +1,16 @@
 use super::Board;
+use super::map::Map;
 use crate::constant::*;
 
 impl Board {
     fn start_turn(&mut self) {
         self.turn += 1;
-        self.refresh_all();
+        self.map.refresh_all();
     }
     
     fn end_turn(&mut self) {
         if self.turn % 4 == 0 {
-            self.sow_all()
+            self.map.sow_all()
         }
     }
 
