@@ -61,7 +61,7 @@ impl Board {
         self.map.can_move(self.king.get_pos(), dir)
     }
 
-    pub fn king_exe_move(&mut self, dir: &Dir) -> Result<(), &str> {
+    pub fn king_move(&mut self, dir: &Dir) -> Result<(), &str> {
         match self.map.mvcost_dir(self.king.get_pos(), dir) {
             Err(s) => Err(s),
             Ok(mvcost) => {
