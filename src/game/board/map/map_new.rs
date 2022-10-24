@@ -24,7 +24,8 @@ impl Map {
 
     fn manually_set_building(&mut self, r: i64, c: i64, manmade: Manmade) {
         match manmade {
-            Manmade::Hovel => self.hovels_pos.push(Pos::new(r, c))
+            Manmade::Hovel => self.hovels_pos.push(Pos::new(r, c)),
+            _ => (),
         }
         self.tile_mut(&Pos::new(r, c))
             .set_placement(Placement::Building(manmade));

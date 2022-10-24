@@ -63,12 +63,14 @@ pub enum Resource {
 #[derive(Clone)]
 pub enum Manmade {
     Hovel,
+    Others,
 }
 
 impl Manmade {
     pub(super) fn max_process(&self) -> i64 {
         match self {
-            Manmade::Hovel => PROCESS_HOVEL
+            Manmade::Hovel => PROCESS_HOVEL,
+            _ => 0,
         }
     }
 }
@@ -83,14 +85,14 @@ pub enum Placement {
 
 impl Placement {
     pub(super) fn is_hovel(&self) -> bool {
-        match self {
-            Placement::Building(m) => {
-                match m {
-                    Manmade::Hovel => true,
-                    _ => false,
-                }
-            },
-            _ => false,
+        if let Placement::Building(m) = self {
+            if let Manmade::Hovel = m {
+                true
+            }else{
+                false
+            }
+        }else{
+            false
         }
     }
 

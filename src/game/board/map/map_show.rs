@@ -59,9 +59,11 @@ impl Map {
                     },
                     Placement::Building(m) => match m {
                         Manmade::Hovel => print!("h"),
+                        _ => print!(" "),
                     },
                     Placement::Foundation(m, process) => match m {
                         Manmade::Hovel => print!("{}h{}", RED, RESET),
+                        _ => print!(" "),
                     },
                 }
             }
