@@ -88,15 +88,15 @@ impl Placement {
         if let Placement::Building(m) = self {
             if let Manmade::Hovel = m {
                 true
-            }else{
+            } else {
                 false
             }
-        }else{
+        } else {
             false
         }
     }
 
-    fn remained_process(&self) -> i64 {
+    fn remained_process(&self) -> Option<i64> {
         match self {
             Placement::Foundation(m, p) => {
                 if *p < 0 {
@@ -106,19 +106,19 @@ impl Placement {
                 if rp < 0 {
                     panic!("Should not get minus remained process")
                 }
-                rp
-            },
-            _ => panic!("Should not cal remained process on Non Foundation")
+                Some(rp)
+            }
+            _ => None
         }
     }
 
     pub fn get_process(&self) -> Option<i64> {
         match self {
             Placement::Foundation(m, p) => Some(*p),
-            _ => None
+            _ => None,
         }
     }
-    
+
     pub(super) fn mvcost(&self) -> Result<f64, &'static str> {
         match self {
             Placement::Landform(n) => n.mvcost(),
@@ -138,7 +138,7 @@ impl Placement {
         }
     }
 
-    pub(super) fn found(&mut self, manmade : Manmade) -> Result<(), &'static str> {
+    pub(super) fn found(&mut self, manmade: Manmade) -> Result<(), &'static str> {
         match self.can_found() {
             Err(s) => Err(s),
             Ok(()) => {
@@ -177,31 +177,27 @@ impl Placement {
     pub(super) fn build(&mut self) -> Result<bool, &'static str> {
         match self.can_build() {
             Err(s) => Err(s),
-            Ok(_) => {
-                match self.clone() {
-                    Placement::Foundation(m, p) => {
-                        *self = Placement::Foundation(m.clone(), p+1);
-                        if self.remained_process() == 0 {
-                            *self = Placement::Building(m);
-                            Ok(true)
-                        }else{
-                            Ok(false)
-                        }
-                    },
-                    _ => panic!("Should not build on Non Foundation")
+            Ok(_) => match self.clone() {
+                Placement::Foundation(m, p) => {
+                    *self = Placement::Foundation(m.clone(), p + 1);
+                    if self.remained_process().unwrap() == 0 {
+                        *self = Placement::Building(m);
+                        Ok(true)
+                    } else {
+                        Ok(false)
+                    }
                 }
-            }
+                _ => panic!("Should not build on Non Foundation"),
+            },
         }
     }
 
     pub(super) fn produce(&self) -> Option<Resource> {
         match self {
-            Placement::Landform(n)=> {
-                match n {
-                    Natural::Farm => Some(Resource::Food),
-                    Natural::Tree => Some(Resource::Wood),
-                    _ => None,
-                }
+            Placement::Landform(n) => match n {
+                Natural::Farm => Some(Resource::Food),
+                Natural::Tree => Some(Resource::Wood),
+                _ => None,
             },
             _ => None,
         }
@@ -213,13 +209,11 @@ impl Placement {
             Some(r) => match r {
                 Resource::Food => true,
                 _ => false,
-            }
+            },
         }
     }
 
-    pub(super) fn set_natural(&mut self, natural : Natural) {
+    pub(super) fn set_natural(&mut self, natural: Natural) {
         *self = Placement::Landform(natural);
     }
-
-    
 }

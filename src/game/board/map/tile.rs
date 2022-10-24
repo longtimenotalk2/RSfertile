@@ -1,6 +1,6 @@
 pub mod entity;
 use crate::constant::*;
-use entity::{Manmade, Natural, Placement, Terrian, Resource};
+use entity::{Manmade, Natural, Placement, Resource, Terrian};
 
 #[derive(Clone)]
 pub struct Tile {
@@ -42,7 +42,7 @@ impl Tile {
         self.placement.is_hovel()
     }
 
-     pub fn get_supply(&self) -> bool {
+    pub fn get_supply(&self) -> bool {
         self.supply
     }
 
@@ -59,17 +59,13 @@ impl Tile {
         }
     }
 
-
-
     pub fn can_step(&self) -> Result<(), &'static str> {
         self.terrian.can_step()
     }
 
     pub fn mvcost(&self) -> Result<f64, &'static str> {
-        match self.can_step() {
-            Err(s) => Err(s),
-            Ok(_) => Ok(self.terrian.mvcost().expect("") + self.placement.mvcost().expect("")),
-        }
+        self.can_step()?;
+        Ok(self.terrian.mvcost().unwrap()+self.placement.mvcost().unwrap())
     }
 
     pub fn can_found(&self) -> Result<(), &'static str> {
@@ -118,7 +114,7 @@ impl Tile {
             Some(r) => {
                 if self.supply {
                     Ok(r)
-                }else{
+                } else {
                     Err("This tile has been picked this turn.")
                 }
             }
@@ -128,17 +124,13 @@ impl Tile {
     pub fn pick(&mut self) -> Result<Resource, &'static str> {
         match self.can_pick() {
             Err(s) => Err(s),
-            Ok(_) => {
-                match self.placement.produce() {
-                    None => Err("No resource can pick in this tile."),
-                    Some(r) => {
-                        match self.consume() {
-                            Err(s1) => Err(s1),
-                            Ok(_) => Ok(r),
-                        }
-                    },
-                }
-            }
+            Ok(_) => match self.placement.produce() {
+                None => Err("No resource can pick in this tile."),
+                Some(r) => match self.consume() {
+                    Err(s1) => Err(s1),
+                    Ok(_) => Ok(r),
+                },
+            },
         }
     }
 }

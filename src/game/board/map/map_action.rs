@@ -1,6 +1,6 @@
 use super::map_find::{Dir, Pos};
-use super::Map;
 use super::tile::entity::{Manmade, Resource};
+use super::Map;
 
 impl Map {
     pub fn can_move(&self, pos: &Pos, dir: &Dir) -> Result<(), &'static str> {
@@ -23,7 +23,7 @@ impl Map {
         }
     }
 
-    pub fn can_found(&self, pos : &Pos) -> Result<(), &'static str> {
+    pub fn can_found(&self, pos: &Pos) -> Result<(), &'static str> {
         self.tile(pos).can_found()
     }
 
@@ -31,7 +31,7 @@ impl Map {
         self.tile_mut(pos).found(manmade)
     }
 
-    pub fn can_build(&self, pos : &Pos) -> Result<(), &'static str> {
+    pub fn can_build(&self, pos: &Pos) -> Result<(), &'static str> {
         self.tile(pos).can_build()
     }
 
@@ -48,11 +48,11 @@ impl Map {
         }
     }
 
-    pub fn can_pick(&self, pos : &Pos) -> Result<Resource, &'static str> {
+    pub fn can_pick(&self, pos: &Pos) -> Result<Resource, &'static str> {
         self.tile(pos).can_pick()
     }
 
-    pub fn pick(&mut self, pos : &Pos) -> Result<Resource, &'static str> {
+    pub fn pick(&mut self, pos: &Pos) -> Result<Resource, &'static str> {
         self.tile_mut(pos).pick()
     }
 }

@@ -1,5 +1,5 @@
-use super::Board;
 use super::map::Map;
+use super::Board;
 use crate::constant::*;
 
 impl Board {
@@ -7,16 +7,16 @@ impl Board {
         self.turn += 1;
         self.map.refresh_all();
     }
-    
+
     fn end_turn(&mut self) {
         if self.turn % 4 == 0 {
             self.map.sow_all();
         }
     }
 
-    pub fn pass_cp (&mut self, cpc:i64) {
+    pub fn pass_cp(&mut self, cpc: i64) {
         self.cp += cpc;
-        while self.cp >= MAX_CP{
+        while self.cp >= MAX_CP {
             self.cp -= MAX_CP;
             self.end_turn();
             self.start_turn();
@@ -27,11 +27,3 @@ impl Board {
         self.map.get_all_power()
     }
 }
-
-
-
-
-
-
-
-

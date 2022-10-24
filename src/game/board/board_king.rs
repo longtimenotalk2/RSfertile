@@ -36,7 +36,7 @@ impl King {
         if self.food > 0 {
             self.food -= 1;
             Ok(())
-        }else{
+        } else {
             Err("No food in the inventory")
         }
     }
@@ -45,7 +45,7 @@ impl King {
         if self.wood > 0 {
             self.wood -= 1;
             Ok(())
-        }else{
+        } else {
             Err("No food in the inventory")
         }
     }
@@ -56,7 +56,6 @@ impl King {
 }
 
 impl Board {
-
     pub fn king_can_move(&self, dir: &Dir) -> Result<(), &'static str> {
         self.map.can_move(self.king.get_pos(), dir)
     }
@@ -91,7 +90,7 @@ impl Board {
                     self.king.wood += 1;
                     Ok(())
                 }
-            }
+            },
         }
     }
 
@@ -105,7 +104,7 @@ impl Board {
             Ok(_) => {
                 self.pass_cp(C_I);
                 Ok(())
-            },
+            }
         }
     }
 
@@ -120,7 +119,7 @@ impl Board {
             Ok(_) => {
                 if self.king.get_food() > 0 && self.king.get_wood() > 0 {
                     Ok(())
-                }else{
+                } else {
                     Err("No food or wood in inventory")
                 }
             }

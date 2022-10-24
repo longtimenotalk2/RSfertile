@@ -1,9 +1,9 @@
-use super::Game;
 use super::board::map::map_find::Dir;
 use super::board::map::tile::entity::Manmade;
+use super::Game;
 
-const RED : &str = "\u{1b}[31m";
-const RESET : &str = "\u{1b}[m";
+const RED: &str = "\u{1b}[31m";
+const RESET: &str = "\u{1b}[m";
 
 fn refuse(txt: &str) {
     println!("{}Refuse : {}{}", RED, txt, RESET);
@@ -14,17 +14,17 @@ impl Game {
         let board_new = self.board().clone();
         self.boards.push(board_new);
     }
-    
+
     pub(super) fn undo(&mut self) {
-        if self.boards.len() > 1{
+        if self.boards.len() > 1 {
             self.boards.pop();
             self.show();
-        }else{
+        } else {
             refuse("initial state, can not undo")
         }
     }
 
-    pub(super) fn cmd_move(&mut self, dir : &Dir){
+    pub(super) fn cmd_move(&mut self, dir: &Dir) {
         match self.board().king_can_move(dir) {
             Err(s) => refuse(s),
             Ok(_) => {
@@ -51,7 +51,9 @@ impl Game {
             Err(s) => refuse(s),
             Ok(_) => {
                 self.update();
-                self.board_mut().king_found(manmade).expect("panic in king found");
+                self.board_mut()
+                    .king_found(manmade)
+                    .expect("panic in king found");
                 self.show();
             }
         }
@@ -73,15 +75,8 @@ impl Game {
         self.board_mut().king_end();
         self.show();
     }
-    
+
     pub(super) fn cmd_invalid(&self) {
         refuse("invalid input")
     }
 }
-
-
-
-
-
-
-

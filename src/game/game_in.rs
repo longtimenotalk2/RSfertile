@@ -1,11 +1,10 @@
-use super::Game;
 use super::board::map::map_find::Dir;
 use super::board::map::tile::entity::Manmade;
+use super::Game;
 use std::io;
 
-
 impl Game {
-    fn parse_cmd(&mut self, cmd : &str) {
+    fn parse_cmd(&mut self, cmd: &str) {
         match cmd.trim() {
             "s" => self.cmd_move(&Dir::R),
             "x" => self.cmd_move(&Dir::DR),
@@ -23,7 +22,7 @@ impl Game {
     }
 
     pub fn main_loop(&mut self) {
-        loop{
+        loop {
             let mut cmd = String::new();
             io::stdin().read_line(&mut cmd).expect("fail to read line");
             self.parse_cmd(&cmd);
