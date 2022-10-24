@@ -75,7 +75,7 @@ impl Board {
         }
     }
 
-    pub fn king_can_pick(&self) -> Result<(), &str> {
+    pub fn king_can_pick(&self) -> Result<Resource, &str> {
         self.map.can_pick(&self.king.get_pos())
     }
 

@@ -25,10 +25,10 @@ impl Game {
     }
 
     pub(super) fn cmd_move(&mut self, dir : &Dir){
-        match self.board(self).king_can_move(dir) {
+        match self.board().king_can_move(dir) {
             Err(s) => refuse(s),
             Ok(_) => {
-                self.update()
+                self.update();
                 self.board_mut().king_move(dir).expect("panic in king move");
                 self.show();
             }

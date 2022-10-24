@@ -1,6 +1,6 @@
 use super::Game;
 use super::board::map::map_find::Dir;
-use super::board::map::tile::entity::Building;
+use super::board::map::tile::entity::Manmade;
 use std::io;
 
 
@@ -13,7 +13,7 @@ impl Game {
             "a" => self.cmd_move(&Dir::L),
             "q" => self.cmd_move(&Dir::UL),
             "w" => self.cmd_move(&Dir::UR),
-            "f" => self.cmd_found(Building::Hovel),
+            "f" => self.cmd_found(Manmade::Hovel),
             "b" => self.cmd_build(),
             "e" => self.cmd_end(),
             "u" => self.undo(),

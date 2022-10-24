@@ -7,6 +7,7 @@ pub mod map_new;
 pub mod map_action;
 
 use super::map::tile::Tile;
+use super::map::map_find::Pos;
 
 #[derive(Clone)]
 pub struct Map {

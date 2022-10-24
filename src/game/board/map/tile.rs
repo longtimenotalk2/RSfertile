@@ -108,12 +108,16 @@ impl Tile {
         self.placement.build()
     }
 
-    pub fn can_pick(&self) -> Result<(), &str> {
+    pub fn can_produce_food(&self) -> bool {
+        self.placement.can_produce_food()
+    }
+
+    pub fn can_pick(&self) -> Result<Resource, &str> {
         match self.placement.produce() {
             None => Err("No resource can pick in this tile."),
             Some(r) => {
                 if self.supply {
-                    Ok(())
+                    Ok(r)
                 }else{
                     Err("This tile has been picked this turn.")
                 }

@@ -17,7 +17,7 @@ impl Map {
         }
     }
 
-    pub(super) fn refresh_all(&mut self) {
+    pub fn refresh_all(&mut self) {
         for pos in self.find_all() {
             self.tile_mut(&pos).refresh();
         }
@@ -48,7 +48,7 @@ impl Map {
         }
     }
 
-    pub fn can_pick(&self, pos : &Pos) -> Result<(), &str> {
+    pub fn can_pick(&self, pos : &Pos) -> Result<Resource, &str> {
         self.tile(pos).can_pick()
     }
 

@@ -1,9 +1,7 @@
 pub mod map;
-mod board_action;
 mod board_show;
 mod board_new;
 mod board_turn;
-mod board_hovel;
 mod board_king;
 
 use map::tile::Tile;

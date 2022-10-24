@@ -43,7 +43,7 @@ impl Map {
     pub fn sow_all(&mut self) -> Result<i64, &str> {
         let mut count : i64 = 0;
         for pos in self.hovels_pos.clone() {
-            match self.sow_from_pos(pos) {
+            match self.sow_from_pos(&pos) {
                 Err(s) => return Err(s),
                 Ok(b) => {
                     if b {

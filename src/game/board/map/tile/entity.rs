@@ -97,7 +97,7 @@ impl Placement {
     fn remained_process(&self) -> i64 {
         match self {
             Placement::Foundation(m, p) => {
-                if p < 0 {
+                if *p < 0 {
                     panic!("Should not has minus process")
                 }
                 let rp = m.max_process() - p;
@@ -112,7 +112,7 @@ impl Placement {
 
     pub fn get_process(&self) -> Option<i64> {
         match self {
-            Placement::Foundation(m, p) => Some(p),
+            Placement::Foundation(m, p) => Some(*p),
             _ => None
         }
     }
@@ -167,7 +167,7 @@ impl Placement {
 
     pub(super) fn can_build(&self) -> Result<(), &str> {
         match self {
-            Placement::Foundation(_) => Ok(()),
+            Placement::Foundation(..) => Ok(()),
             _ => Err("Can only build on Foundation"),
         }
     }
@@ -205,8 +205,18 @@ impl Placement {
         }
     }
 
+    pub(super) fn can_produce_food(&self) -> bool {
+        match self.produce() {
+            None => false,
+            Some(r) => match r {
+                Resource::Food => true,
+                _ => false,
+            }
+        }
+    }
+
     pub(super) fn set_natural(&mut self, natural : Natural) {
-        *self = Placement::Landform(naturel);
+        *self = Placement::Landform(natural);
     }
 
     

@@ -1,5 +1,4 @@
 use super::map::map_find::Pos;
-use super::map::tile::entity::{Building, Landform, Terrian};
 use super::Board;
 use crate::constant::*;
 
@@ -21,9 +20,9 @@ impl Board {
         println!(
             "Turn : {} ({}/{}), Power Sum : {}",
             self.turn,
-            self.cp as f64 / COEFFICIENT as f64,
-            MAX_CP / COEFFICIENT,
-            self.get_all_power()
+            self.cp as f64 / C_F,
+            MAX_CP / C_I,
+            self.map.get_all_power()
         );
         // Inventory
         println!(

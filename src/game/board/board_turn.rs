@@ -10,7 +10,7 @@ impl Board {
     
     fn end_turn(&mut self) {
         if self.turn % 4 == 0 {
-            self.map.sow_all()
+            self.map.sow_all();
         }
     }
 
@@ -22,4 +22,16 @@ impl Board {
             self.start_turn();
         }
     }
+
+    pub fn get_all_power(&self) -> i64 {
+        self.map.get_all_power()
+    }
 }
+
+
+
+
+
+
+
+
