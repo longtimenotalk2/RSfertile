@@ -50,7 +50,7 @@ impl Tile {
         self.supply = true;
     }
 
-    pub fn consume(&mut self) -> Result<(), &str> {
+    pub fn consume(&mut self) -> Result<(), &'static str> {
         if self.supply {
             self.supply = false;
             Ok(())
@@ -61,50 +61,50 @@ impl Tile {
 
 
 
-    pub fn can_step(&self) -> Result<(), &str> {
+    pub fn can_step(&self) -> Result<(), &'static str> {
         self.terrian.can_step()
     }
 
-    pub fn mvcost(&self) -> Result<f64, &str> {
+    pub fn mvcost(&self) -> Result<f64, &'static str> {
         match self.can_step() {
             Err(s) => Err(s),
             Ok(_) => Ok(self.terrian.mvcost().expect("") + self.placement.mvcost().expect("")),
         }
     }
 
-    pub fn can_found(&self) -> Result<(), &str> {
+    pub fn can_found(&self) -> Result<(), &'static str> {
         match self.terrian.can_found() {
             Err(e) => Err(e),
             Ok(_) => self.placement.can_found(),
         }
     }
 
-    pub fn found(&mut self, manmade: Manmade) -> Result<(), &str> {
+    pub fn found(&mut self, manmade: Manmade) -> Result<(), &'static str> {
         match self.can_found() {
             Err(e) => Err(e),
             Ok(_) => self.placement.found(manmade),
         }
     }
 
-    pub fn can_sow(&self) -> Result<(), &str> {
+    pub fn can_sow(&self) -> Result<(), &'static str> {
         match self.terrian.can_sow() {
             Err(e) => Err(e),
             Ok(_) => self.placement.can_sow(),
         }
     }
 
-    pub fn sow(&mut self) -> Result<(), &str> {
+    pub fn sow(&mut self) -> Result<(), &'static str> {
         match self.can_sow() {
             Err(e) => Err(e),
             Ok(_) => self.placement.sow(),
         }
     }
 
-    pub fn can_build(&self) -> Result<(), &str> {
+    pub fn can_build(&self) -> Result<(), &'static str> {
         self.placement.can_build()
     }
 
-    pub fn build(&mut self) -> Result<bool, &str> {
+    pub fn build(&mut self) -> Result<bool, &'static str> {
         self.placement.build()
     }
 
@@ -112,7 +112,7 @@ impl Tile {
         self.placement.can_produce_food()
     }
 
-    pub fn can_pick(&self) -> Result<Resource, &str> {
+    pub fn can_pick(&self) -> Result<Resource, &'static str> {
         match self.placement.produce() {
             None => Err("No resource can pick in this tile."),
             Some(r) => {
@@ -125,7 +125,7 @@ impl Tile {
         }
     }
 
-    pub fn pick(&mut self) -> Result<Resource, &str> {
+    pub fn pick(&mut self) -> Result<Resource, &'static str> {
         match self.can_pick() {
             Err(s) => Err(s),
             Ok(_) => {

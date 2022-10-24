@@ -9,7 +9,7 @@ pub enum Terrian {
 }
 
 impl Terrian {
-    pub(super) fn mvcost(&self) -> Result<f64, &str> {
+    pub(super) fn mvcost(&self) -> Result<f64, &'static str> {
         match self {
             Terrian::Plain => Ok(MVCOST_PLAIN),
             Terrian::Hill => Ok(MVCOST_HILL),
@@ -17,21 +17,21 @@ impl Terrian {
         }
     }
 
-    pub(super) fn can_step(&self) -> Result<(), &str> {
+    pub(super) fn can_step(&self) -> Result<(), &'static str> {
         match self {
             Terrian::Sea => Err("Can not step on the Sea tile."),
             _ => Ok(()),
         }
     }
 
-    pub(super) fn can_found(&self) -> Result<(), &str> {
+    pub(super) fn can_found(&self) -> Result<(), &'static str> {
         match self {
             Terrian::Sea => Err("Can not found on the Sea tile."),
             _ => Ok(()),
         }
     }
 
-    pub(super) fn can_sow(&self) -> Result<(), &str> {
+    pub(super) fn can_sow(&self) -> Result<(), &'static str> {
         match self {
             Terrian::Sea => Err("Can not sow on the Sea tile."),
             _ => Ok(()),
@@ -46,7 +46,7 @@ pub enum Natural {
 }
 
 impl Natural {
-    pub(super) fn mvcost(&self) -> Result<f64, &str> {
+    pub(super) fn mvcost(&self) -> Result<f64, &'static str> {
         match self {
             Natural::Tree => Ok(MVCOST_TREE),
             _ => Ok(0.),
@@ -117,14 +117,14 @@ impl Placement {
         }
     }
     
-    pub(super) fn mvcost(&self) -> Result<f64, &str> {
+    pub(super) fn mvcost(&self) -> Result<f64, &'static str> {
         match self {
             Placement::Landform(n) => n.mvcost(),
             _ => Ok(0.),
         }
     }
 
-    pub(super) fn can_found(&self) -> Result<(), &str> {
+    pub(super) fn can_found(&self) -> Result<(), &'static str> {
         match self {
             Placement::Void => Ok(()),
             Placement::Landform(natural) => match natural {
@@ -136,7 +136,7 @@ impl Placement {
         }
     }
 
-    pub(super) fn found(&self, manmade : Manmade) -> Result<(), &str> {
+    pub(super) fn found(&mut self, manmade : Manmade) -> Result<(), &'static str> {
         match self.can_found() {
             Err(s) => Err(s),
             Ok(()) => {
@@ -146,7 +146,7 @@ impl Placement {
         }
     }
 
-    pub(super) fn can_sow(&self) -> Result<(), &str> {
+    pub(super) fn can_sow(&self) -> Result<(), &'static str> {
         match self {
             Placement::Void => Ok(()),
             Placement::Landform(_) => Err("Can sow sow on a tile with Natural"),
@@ -155,7 +155,7 @@ impl Placement {
         }
     }
 
-    pub fn sow(&mut self) -> Result<(), &str> {
+    pub fn sow(&mut self) -> Result<(), &'static str> {
         match self.can_sow() {
             Err(s) => Err(s),
             Ok(()) => {
@@ -165,22 +165,22 @@ impl Placement {
         }
     }
 
-    pub(super) fn can_build(&self) -> Result<(), &str> {
+    pub(super) fn can_build(&self) -> Result<(), &'static str> {
         match self {
             Placement::Foundation(..) => Ok(()),
             _ => Err("Can only build on Foundation"),
         }
     }
 
-    pub(super) fn build(&mut self) -> Result<bool, &str> {
+    pub(super) fn build(&mut self) -> Result<bool, &'static str> {
         match self.can_build() {
             Err(s) => Err(s),
             Ok(_) => {
-                match self {
+                match self.clone() {
                     Placement::Foundation(m, p) => {
-                        *p += 1;
+                        *self = Placement::Foundation(m.clone(), p+1);
                         if self.remained_process() == 0 {
-                            *self = Placement::Building(*m);
+                            *self = Placement::Building(m);
                             Ok(true)
                         }else{
                             Ok(false)

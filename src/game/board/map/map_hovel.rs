@@ -16,7 +16,7 @@ impl Map {
         }
     }
 
-    pub fn sow_from_pos(&mut self, pos : &Pos) -> Result<bool, &str> {
+    pub fn sow_from_pos(&mut self, pos : &Pos) -> Result<bool, &'static str> {
         if self.tile(pos).is_hovel() {
             for p in self.find_adjs(pos) {
                 match self.tile(&p).can_sow() {
@@ -40,7 +40,7 @@ impl Map {
         power
     }
 
-    pub fn sow_all(&mut self) -> Result<i64, &str> {
+    pub fn sow_all(&mut self) -> Result<i64, &'static str> {
         let mut count : i64 = 0;
         for pos in self.hovels_pos.clone() {
             match self.sow_from_pos(&pos) {

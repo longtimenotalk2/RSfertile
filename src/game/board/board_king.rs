@@ -32,7 +32,7 @@ impl King {
         self.wood
     }
 
-    fn use_food(&mut self) -> Result<(), &str> {
+    fn use_food(&mut self) -> Result<(), &'static str> {
         if self.food > 0 {
             self.food -= 1;
             Ok(())
@@ -41,7 +41,7 @@ impl King {
         }
     }
 
-    fn use_wood(&mut self) -> Result<(), &str> {
+    fn use_wood(&mut self) -> Result<(), &'static str> {
         if self.wood > 0 {
             self.wood -= 1;
             Ok(())
@@ -57,11 +57,11 @@ impl King {
 
 impl Board {
 
-    pub fn king_can_move(&self, dir: &Dir) -> Result<(), &str> {
+    pub fn king_can_move(&self, dir: &Dir) -> Result<(), &'static str> {
         self.map.can_move(self.king.get_pos(), dir)
     }
 
-    pub fn king_move(&mut self, dir: &Dir) -> Result<(), &str> {
+    pub fn king_move(&mut self, dir: &Dir) -> Result<(), &'static str> {
         match self.map.mvcost_dir(self.king.get_pos(), dir) {
             Err(s) => Err(s),
             Ok(mvcost) => {
@@ -75,11 +75,11 @@ impl Board {
         }
     }
 
-    pub fn king_can_pick(&self) -> Result<Resource, &str> {
+    pub fn king_can_pick(&self) -> Result<Resource, &'static str> {
         self.map.can_pick(&self.king.get_pos())
     }
 
-    pub fn king_pick(&mut self) -> Result<(), &str> {
+    pub fn king_pick(&mut self) -> Result<(), &'static str> {
         match self.map.pick(&self.king.get_pos()) {
             Err(s) => Err(s),
             Ok(r) => match r {
@@ -95,11 +95,11 @@ impl Board {
         }
     }
 
-    pub fn king_can_found(&self) -> Result<(), &str> {
+    pub fn king_can_found(&self) -> Result<(), &'static str> {
         self.map.can_found(self.king.get_pos())
     }
 
-    pub fn king_found(&mut self, manmade: Manmade) -> Result<(), &str> {
+    pub fn king_found(&mut self, manmade: Manmade) -> Result<(), &'static str> {
         match self.map.found(&self.king.get_pos(), manmade) {
             Err(s) => Err(s),
             Ok(_) => {
@@ -114,7 +114,7 @@ impl Board {
         self.pass_cp(cpr);
     }
 
-    pub fn king_can_build(&self) -> Result<(), &str> {
+    pub fn king_can_build(&self) -> Result<(), &'static str> {
         match self.map.can_build(&self.king.get_pos()) {
             Err(s) => Err(s),
             Ok(_) => {
@@ -127,7 +127,7 @@ impl Board {
         }
     }
 
-    pub fn king_build(&mut self) -> Result<bool, &str> {
+    pub fn king_build(&mut self) -> Result<bool, &'static str> {
         match self.king_can_build() {
             Err(s) => Err(s),
             Ok(_) => {
