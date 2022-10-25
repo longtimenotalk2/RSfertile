@@ -91,7 +91,8 @@ impl Map {
             for col in 0..self.n_col {
                 let pos = Pos::new(row, col);
                 // TILE BLOCK
-                self.show_tile(&pos, king_pos);
+                // self.show_tile(&pos, king_pos);
+                print!("{}  ", self.distance(&Pos::new(row, col), &Pos::new(3,4)));
                 print!("│");
             }
             print!("\n");

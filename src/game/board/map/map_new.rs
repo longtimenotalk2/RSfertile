@@ -32,7 +32,7 @@ impl Map {
     }
 
     pub fn new_std() -> Self {
-        let mut m = Map::new(4, 6);
+        let mut m = Map::new(8, 8);  //4 6
         m.manually_set_terrian(2, 2, Terrian::Sea);
         m.manually_set_terrian(0, 3, Terrian::Hill);
         m.manually_set_landform(0, 2, Natural::Tree);

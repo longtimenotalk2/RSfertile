@@ -116,4 +116,18 @@ impl Map {
             vec![]
         }
     }
+
+    pub fn distance(&self, pos1 : &Pos, pos2 : &Pos) -> i64 {
+        let (r1, c1) = pos1.get();
+        let (r2, c2) = pos2.get();
+        let rdiff = (r1 - r2).abs();
+        if rdiff % 2 == 0{
+            //Even
+            rdiff.max((c1-c2).abs()+rdiff/2)
+        }else{
+            //Odd 
+            rdiff.max(((c1*2 - c2*2 - 2*(r2%2) + 1).abs()+1)/2+(rdiff-1)/2)
+        }
+        
+    }
 }

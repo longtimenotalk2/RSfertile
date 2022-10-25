@@ -4,6 +4,7 @@ pub mod map_find;
 pub mod map_hovel;
 pub mod map_new;
 pub mod map_show;
+pub mod map_search;
 pub mod tile;
 
 use super::map::map_find::Pos;
