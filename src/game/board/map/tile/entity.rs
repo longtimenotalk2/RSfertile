@@ -86,15 +86,11 @@ pub enum Placement {
 
 impl Placement {
     pub(super) fn is_hovel(&self) -> bool {
-        if let Placement::Building(m) = self {
-            if let Manmade::Hovel = m {
-                true
-            } else {
-                false
-            }
-        } else {
-            false
-        }
+        matches!(self, Placement::Building(Manmade::Hovel))
+    }
+
+    pub(super) fn is_sawmill(&self) -> bool {
+        matches!(self, Placement::Building(Manmade::Sawmill))
     }
 
     fn remained_process(&self) -> Option<i64> {

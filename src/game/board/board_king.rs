@@ -119,4 +119,23 @@ impl Board {
         self.pass_cp(C_I);
         self.map.build(&self.king.get_pos())
     }
+
+    pub fn king_can_saw(&self) -> Result<(), &'static str> {
+        self.map.can_saw(self.king.get_pos())?;
+        if self.king.get_food() > 0 {
+            Ok(())
+        }else{
+            Err("No food in inventory")
+        }
+        
+    }
+
+    pub fn king_saw(&mut self) -> Result<(), &'static str> {
+        self.king_can_saw()?;
+        self.map.saw(self.king.get_pos());
+        self.king.use_food().unwrap();
+        self.king.wood += 1;
+        Ok(())
+    }
+    
 }

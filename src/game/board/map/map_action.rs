@@ -48,4 +48,26 @@ impl Map {
     pub fn pick(&mut self, pos: &Pos) -> Result<Resource, &'static str> {
         self.tile_mut(pos).pick()
     }
+
+    pub fn can_saw(&self, pos : &Pos) -> Result<Pos, &'static str> {
+        if self.tile(pos).is_sawmill() {
+            for p in self.find_adjs(pos) {
+                if let Ok(Resource::Wood) = self.tile(&p).can_pick() {
+                    return Ok(p);
+                }
+            }
+            Err("No adjacent tile can pick tree")
+        }else{
+            Err("Can not saw in tile without sawmill")
+        }
+    }
+
+    pub fn saw(&mut self, pos : &Pos) -> Result<(), &'static str> {
+        let p = self.can_saw(pos)?;
+        match self.tile_mut(&p).pick() {
+            Ok(Resource::Wood) => Ok(()),
+            _ => panic!("Do not pick wood in sawing")
+        }
+    }
+    
 }

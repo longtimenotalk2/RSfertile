@@ -42,6 +42,10 @@ impl Tile {
         self.placement.is_hovel()
     }
 
+    pub fn is_sawmill(&self) -> bool {
+        self.placement.is_sawmill()
+    }
+
     pub fn get_supply(&self) -> bool {
         self.supply
     }
