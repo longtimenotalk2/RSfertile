@@ -61,17 +61,13 @@ impl Board {
     }
 
     pub fn king_move(&mut self, dir: &Dir) -> Result<(), &'static str> {
-        match self.map.mvcost_dir(self.king.get_pos(), dir) {
-            Err(s) => Err(s),
-            Ok(mvcost) => {
-                //move
-                let p = self.map.find_dir(self.king.get_pos(), dir).unwrap();
-                self.king.set_pos(&p);
-                //cpcost
-                self.pass_cp((mvcost * C_F) as i64);
-                Ok(())
-            }
-        }
+        let mvcost = self.map.mvcost_dir(self.king.get_pos(), dir)?;
+        // move
+        let p = self.map.find_dir(self.king.get_pos(), dir).unwrap();
+        self.king.set_pos(&p);
+        //cpcost
+        self.pass_cp((mvcost * C_F) as i64);
+        Ok(())
     }
 
     pub fn king_can_pick(&self) -> Result<Resource, &'static str> {
@@ -79,19 +75,17 @@ impl Board {
     }
 
     pub fn king_pick(&mut self) -> Result<(), &'static str> {
-        match self.map.pick(&self.king.get_pos()) {
-            Err(s) => Err(s),
-            Ok(r) => match r {
-                Resource::Food => {
-                    self.king.food += 1;
-                    Ok(())
-                }
-                Resource::Wood => {
-                    self.king.wood += 1;
-                    Ok(())
-                }
-            },
+        let r = self.map.pick(&self.king.get_pos())?;
+        self.pass_cp(C_I);
+        match r {
+            Resource::Food => {
+                self.king.food += 1;
+            }
+            Resource::Wood => {
+                self.king.wood += 1;
+            }
         }
+        Ok(())
     }
 
     pub fn king_can_found(&self) -> Result<(), &'static str> {
@@ -99,13 +93,9 @@ impl Board {
     }
 
     pub fn king_found(&mut self, manmade: Manmade) -> Result<(), &'static str> {
-        match self.map.found(&self.king.get_pos(), manmade) {
-            Err(s) => Err(s),
-            Ok(_) => {
-                self.pass_cp(C_I);
-                Ok(())
-            }
-        }
+        self.map.found(&self.king.get_pos(), manmade)?;
+        self.pass_cp(C_I);
+        Ok(())
     }
 
     pub fn king_end(&mut self) {
@@ -114,26 +104,19 @@ impl Board {
     }
 
     pub fn king_can_build(&self) -> Result<(), &'static str> {
-        match self.map.can_build(&self.king.get_pos()) {
-            Err(s) => Err(s),
-            Ok(_) => {
-                if self.king.get_food() > 0 && self.king.get_wood() > 0 {
-                    Ok(())
-                } else {
-                    Err("No food or wood in inventory")
-                }
-            }
+        self.map.can_build(&self.king.get_pos())?;
+        if self.king.get_food() > 0 && self.king.get_wood() > 0 {
+            Ok(())
+        } else {
+            Err("No food or wood in inventory")
         }
     }
 
     pub fn king_build(&mut self) -> Result<bool, &'static str> {
-        match self.king_can_build() {
-            Err(s) => Err(s),
-            Ok(_) => {
-                self.king.use_food().unwrap();
-                self.king.use_wood().unwrap();
-                self.map.build(&self.king.get_pos())
-            }
-        }
+        self.king_can_build()?;
+        self.king.use_food().unwrap();
+        self.king.use_wood().unwrap();
+        self.pass_cp(C_I);
+        self.map.build(&self.king.get_pos())
     }
 }

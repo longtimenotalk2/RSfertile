@@ -4,7 +4,7 @@ use super::Map;
 impl Map {
     pub fn get_power(&self, pos: &Pos) -> i64 {
         if self.tile(pos).is_hovel() {
-            let mut power: i64 = 0;
+            let mut power: i64 = 1;
             for t in self.adj_tiles(pos) {
                 if t.can_produce_food() {
                     power += 1

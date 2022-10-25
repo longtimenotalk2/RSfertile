@@ -69,31 +69,25 @@ impl Tile {
     }
 
     pub fn can_found(&self) -> Result<(), &'static str> {
-        match self.terrian.can_found() {
-            Err(e) => Err(e),
-            Ok(_) => self.placement.can_found(),
-        }
+        self.terrian.can_found().and(
+            self.placement.can_found()
+        )
     }
 
     pub fn found(&mut self, manmade: Manmade) -> Result<(), &'static str> {
-        match self.can_found() {
-            Err(e) => Err(e),
-            Ok(_) => self.placement.found(manmade),
-        }
+        self.can_found()?;
+        self.placement.found(manmade)
     }
 
     pub fn can_sow(&self) -> Result<(), &'static str> {
-        match self.terrian.can_sow() {
-            Err(e) => Err(e),
-            Ok(_) => self.placement.can_sow(),
-        }
+        self.terrian.can_sow().and(
+            self.placement.can_sow()
+        )
     }
 
     pub fn sow(&mut self) -> Result<(), &'static str> {
-        match self.can_sow() {
-            Err(e) => Err(e),
-            Ok(_) => self.placement.sow(),
-        }
+        self.can_sow()?;
+        self.placement.sow()
     }
 
     pub fn can_build(&self) -> Result<(), &'static str> {
@@ -109,28 +103,20 @@ impl Tile {
     }
 
     pub fn can_pick(&self) -> Result<Resource, &'static str> {
-        match self.placement.produce() {
-            None => Err("No resource can pick in this tile."),
-            Some(r) => {
-                if self.supply {
-                    Ok(r)
-                } else {
-                    Err("This tile has been picked this turn.")
-                }
+        if let Some(r) = self.placement.produce() {
+            if self.supply {
+                Ok(r)
+            }else{
+                Err("This tile has been picked this turn.")
             }
+        }else{
+            Err("No resource can pick in this tile.")
         }
     }
 
     pub fn pick(&mut self) -> Result<Resource, &'static str> {
-        match self.can_pick() {
-            Err(s) => Err(s),
-            Ok(_) => match self.placement.produce() {
-                None => Err("No resource can pick in this tile."),
-                Some(r) => match self.consume() {
-                    Err(s1) => Err(s1),
-                    Ok(_) => Ok(r),
-                },
-            },
-        }
+        let r = self.can_pick()?;
+        self.consume()?;
+        Ok(r)
     }
 }

@@ -11,10 +11,8 @@ impl Map {
     }
 
     pub fn mvcost_dir(&self, pos: &Pos, dir: &Dir) -> Result<f64, &'static str> {
-        match self.can_move(pos, dir) {
-            Err(s) => Err(s),
-            Ok(_) => self.tile(&self.find_dir(pos, dir).unwrap()).mvcost(),
-        }
+        self.can_move(pos, dir)?;
+        self.tile(&self.find_dir(pos, dir).unwrap()).mvcost()
     }
 
     pub fn refresh_all(&mut self) {
@@ -36,16 +34,11 @@ impl Map {
     }
 
     pub fn build(&mut self, pos: &Pos) -> Result<bool, &'static str> {
-        let result = self.tile_mut(pos).build();
-        match result {
-            Err(s) => Err(s),
-            Ok(is_finish) => {
-                if is_finish && self.tile(pos).is_hovel() {
-                    self.hovels_pos.push(pos.clone())
-                }
-                Ok(is_finish)
-            }
+        let is_finish = self.tile_mut(pos).build()?;
+        if is_finish && self.tile(pos).is_hovel() {
+            self.hovels_pos.push(pos.clone())
         }
+        Ok(is_finish)
     }
 
     pub fn can_pick(&self, pos: &Pos) -> Result<Resource, &'static str> {
