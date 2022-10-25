@@ -23,7 +23,8 @@ impl Game {
             "b" => self.cmd_build(),
             "e" => self.cmd_end(),
             "u" => self.cmd_undo(),
-            "p" => self.cmd_pick().or(self.cmd_saw()),
+            "p" => self.cmd_pick(),
+            "m" => self.cmd_saw(),
             _ => self.cmd_invalid(),
         };
         match result {
