@@ -63,13 +63,14 @@ pub enum Resource {
 #[derive(Clone)]
 pub enum Manmade {
     Hovel,
-    Others,
+    Sawmill,
 }
 
 impl Manmade {
     pub(super) fn max_process(&self) -> i64 {
         match self {
             Manmade::Hovel => PROCESS_HOVEL,
+            Manmade::Sawmill => PROCESS_SAWMILL,
             _ => 0,
         }
     }
