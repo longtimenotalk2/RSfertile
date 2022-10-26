@@ -3,6 +3,7 @@ use super::map::tile::entity::{Manmade, Resource};
 use super::map::tile::Tile;
 use super::Board;
 use crate::constant::*;
+use crate::error::CtrlErr;
 
 #[derive(Clone)]
 pub(super) struct King {
@@ -56,11 +57,11 @@ impl King {
 }
 
 impl Board {
-    pub fn king_can_move(&self, dir: &Dir) -> Result<(), &'static str> {
+    pub fn king_can_move(&self, dir: &Dir) -> Result<(), CtrlErr> {
         self.map.can_move(self.king.get_pos(), dir)
     }
 
-    pub fn king_move(&mut self, dir: &Dir) -> Result<(), &'static str> {
+    pub fn king_move(&mut self, dir: &Dir) -> Result<(), CtrlErr> {
         let mvcost = self.map.mvcost_dir(self.king.get_pos(), dir)?;
         // move
         let p = self.map.find_dir(self.king.get_pos(), dir).unwrap();
@@ -70,11 +71,11 @@ impl Board {
         Ok(())
     }
 
-    pub fn king_can_pick(&self) -> Result<Resource, &'static str> {
+    pub fn king_can_pick(&self) -> Result<Resource, CtrlErr> {
         self.map.can_pick(&self.king.get_pos())
     }
 
-    pub fn king_pick(&mut self) -> Result<(), &'static str> {
+    pub fn king_pick(&mut self) -> Result<(), CtrlErr> {
         let r = self.map.pick(&self.king.get_pos())?;
         self.pass_cp(C_I);
         match r {
@@ -88,11 +89,11 @@ impl Board {
         Ok(())
     }
 
-    pub fn king_can_found(&self) -> Result<(), &'static str> {
+    pub fn king_can_found(&self) -> Result<(), CtrlErr> {
         self.map.can_found(self.king.get_pos())
     }
 
-    pub fn king_found(&mut self, manmade: Manmade) -> Result<(), &'static str> {
+    pub fn king_found(&mut self, manmade: Manmade) -> Result<(), CtrlErr> {
         self.map.found(&self.king.get_pos(), manmade)?;
         self.pass_cp(C_I);
         Ok(())
@@ -103,16 +104,20 @@ impl Board {
         self.pass_cp(cpr);
     }
 
-    pub fn king_can_build(&self) -> Result<(), &'static str> {
+    pub fn king_can_build(&self) -> Result<(), CtrlErr> {
         self.map.can_build(&self.king.get_pos())?;
-        if self.king.get_food() > 0 && self.king.get_wood() > 0 {
-            Ok(())
+        if self.king.get_wood() > 0 {
+            if self.king.get_food() > 0 {
+                Ok(())
+            }else{
+                Err(CtrlErr::LackResource(Resource::Food))
+            }
         } else {
-            Err("No food or wood in inventory")
+            Err(CtrlErr::LackResource(Resource::Wood))
         }
     }
 
-    pub fn king_build(&mut self) -> Result<bool, &'static str> {
+    pub fn king_build(&mut self) -> Result<bool, CtrlErr> {
         self.king_can_build()?;
         self.king.use_food().unwrap();
         self.king.use_wood().unwrap();
@@ -120,17 +125,17 @@ impl Board {
         self.map.build(&self.king.get_pos())
     }
 
-    pub fn king_can_saw(&self) -> Result<(), &'static str> {
+    pub fn king_can_saw(&self) -> Result<(), CtrlErr> {
         self.map.can_saw(self.king.get_pos())?;
         if self.king.get_food() > 0 {
             Ok(())
         }else{
-            Err("No food in inventory")
+            Err(CtrlErr::LackResource(Resource::Food))
         }
         
     }
 
-    pub fn king_saw(&mut self) -> Result<(), &'static str> {
+    pub fn king_saw(&mut self) -> Result<(), CtrlErr> {
         self.king_can_saw()?;
         self.map.saw(self.king.get_pos());
         self.king.use_food().unwrap();

@@ -26,9 +26,9 @@ impl Terrian {
         }
     }
 
-    pub(super) fn can_step(&self) -> Result<(), &'static str> {
+    pub(super) fn can_step(&self) -> Result<(), CtrlErr> {
         match self {
-            Terrian::Sea => Err("Can not step on the Sea tile."),
+            Terrian::Sea => Err(CtrlErr::WrongTerrian(Terrian::Sea)),
             _ => Ok(()),
         }
     }
@@ -119,7 +119,7 @@ pub enum Placement {
 impl Placement {
     pub fn str(&self) -> String {
         match self {
-            Placement::Void => "No Placement".to_string(),
+            Placement::Void => "Space".to_string(),
             Placement::Landform(n) => format!("Landform {}", n.str()),
             Placement::Building(m) => format!("Building {}", m.str()),
             Placement::Foundation(m, p) => format!("Foundation {}", m.str()),

@@ -12,6 +12,7 @@ fn refuse(txt: &str) {
 
 impl Game {
     fn parse_cmd(&mut self, cmd: &str) {
+        let mut action = String::new;
         let result = match cmd.trim() {
             "s" => self.cmd_move(&Dir::R),
             "x" => self.cmd_move(&Dir::DR),
@@ -29,7 +30,7 @@ impl Game {
             _ => self.cmd_invalid(),
         };
         match result {
-            Err(s) => refuse(s),
+            Err(e) => refuse(s),
             _ => (),
         }
     }

@@ -1,5 +1,6 @@
 use super::map_find::Pos;
 use super::Map;
+use crate::error::CtrlErr;
 
 impl Map {
     pub fn get_power(&self, pos: &Pos) -> i64 {
@@ -16,18 +17,15 @@ impl Map {
         }
     }
 
-    pub fn sow_from_pos(&mut self, pos: &Pos) -> Result<bool, &'static str> {
-        if self.tile(pos).is_hovel() {
-            for p in self.find_adjs(pos) {
-                match self.tile(&p).can_sow() {
-                    Err(s) => (),
-                    Ok(()) => return self.tile_mut(&p).sow().map(|a| true),
-                }
+    pub fn sow_from_pos(&mut self, pos: &Pos) -> Result<bool, CtrlErr> {
+        self.tile(pos).can_give_sow()?;
+        for p in self.find_adjs(pos) {
+            match self.tile(&p).can_sow() {
+                Err(s) => (),
+                Ok(()) => return self.tile_mut(&p).sow().map(|a| true),
             }
-            Ok(false)
-        } else {
-            Err("can not sow from a tile without hovel")
         }
+        Ok(false)
     }
 
     pub fn get_all_power(&self) -> i64 {
@@ -38,16 +36,12 @@ impl Map {
         power
     }
 
-    pub fn sow_all(&mut self) -> Result<i64, &'static str> {
+    pub fn sow_all(&mut self) -> Result<i64, CtrlErr> {
         let mut count: i64 = 0;
         for pos in self.hovels_pos.clone() {
-            match self.sow_from_pos(&pos) {
-                Err(s) => return Err(s),
-                Ok(b) => {
-                    if b {
-                        count += 1;
-                    }
-                }
+            let b = self.sow_from_pos(&pos)?;
+            if b {
+                count += 1;
             }
         }
         Ok(count)
