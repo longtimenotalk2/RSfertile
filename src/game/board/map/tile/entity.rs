@@ -124,10 +124,10 @@ pub enum Placement {
 impl Placement {
     pub fn str(&self) -> String {
         match self {
-            Placement::Void => "Space".to_string(),
-            Placement::Landform(n) => format!("Landform {}", n.str()),
-            Placement::Building(m) => format!("Building {}", m.str()),
-            Placement::Foundation(m, p) => format!("Foundation {}", m.str()),
+            Placement::Void => "Nothing".to_string(),
+            Placement::Landform(n) => format!("{} as Landform", n.str()),
+            Placement::Building(m) => format!("{} as Building", m.str()),
+            Placement::Foundation(m, p) => format!("{} as Foundation", m.str()),
         }
     }
     

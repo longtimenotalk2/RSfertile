@@ -3,72 +3,91 @@ use super::board::map::tile::entity::Manmade;
 use super::Game;
 use crate::error::CtrlErr;
 
+const RED: &str = "\u{1b}[31m";
+const RESET: &str = "\u{1b}[m";
+
+fn refuse(txt: &str) {
+    println!("{}Refuse : {}{}", RED, txt, RESET);
+}
+
+fn refuse_err(err: &CtrlErr, act : &str) {
+    refuse(&err.str(act));
+}
+
 impl Game {
     fn update(&mut self) {
         let board_new = self.board().clone();
         self.boards.push(board_new);
     }
 
-    pub(super) fn cmd_undo(&mut self) -> Result<(), CtrlErr> {
+    pub(super) fn cmd_undo(&mut self) {
         if self.boards.len() > 1 {
             self.boards.pop();
             self.show();
-            Ok(())
         } else {
-            Err(CtrlErr::Undo)
+            refuse("Initial state, can not undo")
         }
     }
 
-    pub(super) fn cmd_move(&mut self, dir: &Dir) -> Result<(), CtrlErr> {
-        self.board().king_can_move(dir)?;
+    pub(super) fn cmd_move(&mut self, dir: &Dir) {
+        if let Err(e) = self.board().king_can_move(dir) {
+            refuse_err(&e, "move");
+            return;
+        }
         self.update();
         self.board_mut().king_move(dir).expect("panic in king move");
         self.show();
-        Ok(())
     }
 
-    pub(super) fn cmd_pick(&mut self) -> Result<(), CtrlErr> {
-        self.board().king_can_pick()?;
+    pub(super) fn cmd_pick(&mut self) {
+        if let Err(e) = self.board().king_can_pick() {
+            refuse_err(&e, "pick");
+            return;
+        }
         self.update();
         self.board_mut().king_pick().expect("panic in king puck");
         self.show();
-        Ok(())
     }
 
-    pub(super) fn cmd_found(&mut self, manmade: Manmade)  -> Result<(), CtrlErr> {
-        self.board().king_can_found()?;
+    pub(super) fn cmd_found(&mut self, manmade: Manmade) {
+        if let Err(e) = self.board().king_can_found(){
+            refuse_err(&e, "found");
+            return;
+        }
         self.update();
         self.board_mut()
             .king_found(manmade)
             .expect("panic in king found");
         self.show();
-        Ok(())
     }
 
-    pub(super) fn cmd_build(&mut self)  -> Result<(), CtrlErr> {
-        self.board().king_can_build()?;
+    pub(super) fn cmd_build(&mut self)  {
+        if let Err(e) = self.board().king_can_build(){
+            refuse_err(&e, "build");
+            return;
+        }
         self.update();
         self.board_mut().king_build().expect("panic in king build");
         self.show();
-        Ok(())
     }
 
-    pub(super) fn cmd_saw(&mut self)  -> Result<(), CtrlErr> {
-        self.board().king_can_saw()?;
+    pub(super) fn cmd_saw(&mut self) {
+        if let Err(e) = self.board().king_can_saw(){
+            refuse_err(&e, "saw");
+            return;
+        }
         self.update();
         self.board_mut().king_saw().expect("panic in king saw");
         self.show();
-        Ok(())
     }
 
-    pub(super) fn cmd_end(&mut self) -> Result<(), CtrlErr> {
+    pub(super) fn cmd_end(&mut self) {
         self.update();
         self.board_mut().king_end();
         self.show();
-        Ok(())
     }
 
-    pub(super) fn cmd_invalid(&self) -> Result<(), CtrlErr> {
-        Err(CtrlErr::Input)
+    pub(super) fn cmd_invalid(&self) {
+        refuse("Invalid input");
     }
 }

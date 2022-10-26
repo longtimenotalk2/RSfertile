@@ -16,7 +16,7 @@ impl King {
     pub(super) fn new(pos: Pos) -> Self {
         Self {
             pos,
-            food: 5,
+            food: 10,
             wood: 5,
         }
     }
