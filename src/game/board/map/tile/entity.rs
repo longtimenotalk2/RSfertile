@@ -3,6 +3,7 @@ use crate::constant::*;
 use crate::error::CtrlErr;
 
 #[derive(Clone)]
+#[derive(Debug)]
 pub enum Terrian {
     Plain,
     Sea,
@@ -49,6 +50,7 @@ impl Terrian {
 }
 
 #[derive(Clone)]
+#[derive(Debug)]
 pub enum Natural {
     Tree,
     Farm,
@@ -71,6 +73,7 @@ impl Natural {
 }
 
 #[derive(Clone)]
+#[derive(Debug)]
 pub enum Resource {
     Food,
     Wood,
@@ -86,6 +89,7 @@ impl Resource {
 }
 
 #[derive(Clone)]
+#[derive(Debug)]
 pub enum Manmade {
     Hovel,
     Sawmill,
@@ -109,6 +113,7 @@ impl Manmade {
 }
 
 #[derive(Clone)]
+#[derive(Debug)]
 pub enum Placement {
     Void,
     Landform(Natural),

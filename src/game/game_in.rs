@@ -30,7 +30,7 @@ impl Game {
             _ => self.cmd_invalid(),
         };
         match result {
-            Err(e) => refuse(s),
+            Err(e) => refuse(&e.str(&"action")),
             _ => (),
         }
     }
