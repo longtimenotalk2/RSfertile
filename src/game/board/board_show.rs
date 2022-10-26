@@ -31,4 +31,8 @@ impl Board {
             self.king.get_wood()
         )
     }
+
+    pub fn show_distance(&self, target_pos: &Pos) {
+        self.map.show_distance(target_pos);
+    }
 }

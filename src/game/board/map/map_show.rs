@@ -14,8 +14,40 @@ const UYELLOW: &str = "\u{1b}[4;33m";
 const BLUE: &str = "\u{1b}[34m";
 const RESET: &str = "\u{1b}[m";
 
+pub enum ShowStyle {
+    Default(Pos),
+    Distance(Pos),
+}
+
 impl Map {
-    pub fn show_tile(&self, pos: &Pos, king_pos: &Pos) {
+    fn print_default(&self, pos: &Pos, king_pos: &Pos) {
+        let tile = self.tile(pos);
+        if pos.eq(king_pos) {
+            match tile.get_process() {
+                Some(process) => print!("{}", process),
+                None => print!("@"),
+            }
+        } else {
+            match tile.get_process() {
+                Some(process) => print!("{}{}{}", RED, process, RESET),
+                None => print!(" "),
+            }
+        }
+    }
+
+    fn print_distance(&self, pos: &Pos, target_pos: &Pos) {
+        let d = self.distance(pos, target_pos);
+        print!("{}", d);
+    }
+    
+    fn show_middle(&self, pos: &Pos, style: &ShowStyle) {
+        match style {
+            ShowStyle::Default(kp) => self.print_default(pos, kp),
+            ShowStyle::Distance(tp) => self.print_distance(pos, tp),
+        }
+    }
+    
+    fn show_tile(&self, pos: &Pos, style: &ShowStyle) {
         let tile = self.tile(&pos);
         match tile.get_terrian() {
             Terrian::Sea => print!("{}Sea{}", BLUE, RESET),
@@ -27,17 +59,7 @@ impl Map {
                     Terrian::Hill => print!("H"),
                 }
                 // Middle
-                if pos.eq(king_pos) {
-                    match tile.get_process() {
-                        Some(process) => print!("{}", process),
-                        None => print!("@"),
-                    }
-                } else {
-                    match tile.get_process() {
-                        Some(process) => print!("{}{}{}", RED, process, RESET),
-                        None => print!(" "),
-                    }
-                }
+                self.show_middle(pos, &style);
                 //Right
                 match tile.get_placement() {
                     Placement::Void => print!(" "),
@@ -72,7 +94,7 @@ impl Map {
         }
     }
 
-    pub fn show_adv(&self, king_pos: &Pos) {
+    fn show_frame(&self, style: &ShowStyle) {
         // first line
         print!("┌───");
         for _col in 0..self.n_col - 1 {
@@ -91,8 +113,9 @@ impl Map {
             for col in 0..self.n_col {
                 let pos = Pos::new(row, col);
                 // TILE BLOCK
-                // self.show_tile(&pos, king_pos);
-                print!("{}  ", self.distance(&Pos::new(row, col), &Pos::new(3,4)));
+                self.show_tile(&pos, style);
+                // ;
+                // print!("{}  ", self.distance(&Pos::new(row, col), &Pos::new(3,4)));
                 print!("│");
             }
             print!("\n");
@@ -123,8 +146,9 @@ impl Map {
         }
         print!("┘");
         print!("\n");
+    }
 
-        // hovels
+    fn show_hovels(&self) {
         for (i, pos) in self.hovels_pos.iter().enumerate() {
             println!(
                 "Hovel_{} ({}, {}) : power = {}",
@@ -134,5 +158,14 @@ impl Map {
                 self.get_power(pos)
             );
         }
+    }
+
+    pub fn show_adv(&self, king_pos: &Pos) {
+        self.show_frame(&ShowStyle::Default(king_pos.clone()));
+        self.show_hovels();
+    }
+
+    pub fn show_distance(&self, target_pos: &Pos) {
+        self.show_frame(&ShowStyle:: Distance(target_pos.clone()));
     }
 }
