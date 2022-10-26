@@ -2,6 +2,7 @@
 
 mod constant;
 mod game;
+mod error;
 use game::Game;
 
 fn main() {

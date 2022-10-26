@@ -1,6 +1,6 @@
 //#![allow(unused)]
 
-mod board;
+pub mod board;
 mod game_command;
 mod game_in;
 mod game_test;
