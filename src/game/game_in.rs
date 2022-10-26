@@ -5,6 +5,7 @@ use std::io;
 
 const RED: &str = "\u{1b}[31m";
 const RESET: &str = "\u{1b}[m";
+
 fn refuse(txt: &str) {
     println!("{}Refuse : {}{}", RED, txt, RESET);
 }

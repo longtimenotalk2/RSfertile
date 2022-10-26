@@ -9,6 +9,14 @@ pub enum Terrian {
 }
 
 impl Terrian {
+    pub fn str(&self) -> String {
+        match self {
+            Terrian::Plain => "Plain".to_string(),
+            Terrian::Sea => "Sea".to_string(),
+            Terrian::Hill => "Hill".to_string(),
+        }
+    }
+    
     pub(super) fn mvcost(&self) -> Result<f64, &'static str> {
         match self {
             Terrian::Plain => Ok(MVCOST_PLAIN),
@@ -46,6 +54,13 @@ pub enum Natural {
 }
 
 impl Natural {
+    pub fn str(&self) -> String {
+        match self {
+            Natural::Tree => "Tree".to_string(),
+            Natural::Farm => "Farm".to_string(),
+        }
+    }
+    
     pub(super) fn mvcost(&self) -> Result<f64, &'static str> {
         match self {
             Natural::Tree => Ok(MVCOST_TREE),
@@ -60,6 +75,15 @@ pub enum Resource {
     Wood,
 }
 
+impl Resource {
+    pub fn str(&self) -> String {
+        match self {
+            Resource::Food => "Food".to_string(),
+            Resource::Wood => "Wood".to_string(),
+        }
+    }
+}
+
 #[derive(Clone)]
 pub enum Manmade {
     Hovel,
@@ -67,6 +91,13 @@ pub enum Manmade {
 }
 
 impl Manmade {
+    pub fn str(&self) -> String {
+        match self {
+            Manmade::Hovel => "Hovel".to_string(),
+            Manmade::Sawmill => "Sawmill".to_string(),
+        }
+    }
+    
     pub(super) fn max_process(&self) -> i64 {
         match self {
             Manmade::Hovel => PROCESS_HOVEL,
@@ -85,6 +116,15 @@ pub enum Placement {
 }
 
 impl Placement {
+    pub fn str(&self) -> String {
+        match self {
+            Placement::Void => "No Placement".to_string(),
+            Placement::Landform(n) => format!("Landform {}", n.str()),
+            Placement::Building(m) => format!("Building {}", m.str()),
+            Placement::Foundation(m, p) => format!("Foundation {}", m.str()),
+        }
+    }
+    
     pub(super) fn is_hovel(&self) -> bool {
         matches!(self, Placement::Building(Manmade::Hovel))
     }
