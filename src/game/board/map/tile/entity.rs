@@ -1,5 +1,6 @@
 use super::Tile;
 use crate::constant::*;
+use crate::error::CtrlErr;
 
 #[derive(Clone)]
 pub enum Terrian {
@@ -17,11 +18,11 @@ impl Terrian {
         }
     }
     
-    pub(super) fn mvcost(&self) -> Result<f64, &'static str> {
+    pub(super) fn mvcost(&self) -> Result<f64, CtrlErr> {
         match self {
             Terrian::Plain => Ok(MVCOST_PLAIN),
             Terrian::Hill => Ok(MVCOST_HILL),
-            Terrian::Sea => Err("Can not get Sea's mvcost"),
+            Terrian::Sea => Err(CtrlErr::WrongTerrian(Terrian::Sea)),
         }
     }
 
@@ -32,16 +33,16 @@ impl Terrian {
         }
     }
 
-    pub(super) fn can_found(&self) -> Result<(), &'static str> {
+    pub(super) fn can_found(&self) -> Result<(), CtrlErr> {
         match self {
-            Terrian::Sea => Err("Can not found on the Sea tile."),
+            Terrian::Sea => Err(CtrlErr::WrongTerrian(Terrian::Sea)),
             _ => Ok(()),
         }
     }
 
-    pub(super) fn can_sow(&self) -> Result<(), &'static str> {
+    pub(super) fn can_sow(&self) -> Result<(), CtrlErr> {
         match self {
-            Terrian::Sea => Err("Can not sow on the Sea tile."),
+            Terrian::Sea => Err(CtrlErr::WrongTerrian(Terrian::Sea)),
             _ => Ok(()),
         }
     }
@@ -61,7 +62,7 @@ impl Natural {
         }
     }
     
-    pub(super) fn mvcost(&self) -> Result<f64, &'static str> {
+    pub(super) fn mvcost(&self) -> Result<f64, CtrlErr> {
         match self {
             Natural::Tree => Ok(MVCOST_TREE),
             _ => Ok(0.),
@@ -156,55 +157,52 @@ impl Placement {
         }
     }
 
-    pub(super) fn mvcost(&self) -> Result<f64, &'static str> {
+    pub(super) fn mvcost(&self) -> Result<f64, CtrlErr> {
         match self {
             Placement::Landform(n) => n.mvcost(),
             _ => Ok(0.),
         }
     }
 
-    pub(super) fn can_found(&self) -> Result<(), &'static str> {
+    pub(super) fn can_found(&self) -> Result<(), CtrlErr> {
         match self {
             Placement::Void => Ok(()),
             Placement::Landform(natural) => match natural {
-                Natural::Tree => Err("Can not found on a tile with Tree."),
+                Natural::Tree => Err(CtrlErr::WrongPlacement(self.clone())),
                 Natural::Farm => Ok(()),
-            },
-            Placement::Building(_) => Err("Can not found on a Building."),
-            Placement::Foundation(..) => Err("Can not found on a Foundation."),
+            }
+            other => Err(CtrlErr::WrongPlacement(self.clone())),
         }
     }
 
-    pub(super) fn found(&mut self, manmade: Manmade) -> Result<(), &'static str> {
+    pub(super) fn found(&mut self, manmade: Manmade) -> Result<(), CtrlErr> {
         self.can_found();
         *self = Placement::Foundation(manmade, 0);
         Ok(())
     }
 
-    pub(super) fn can_sow(&self) -> Result<(), &'static str> {
+    pub(super) fn can_sow(&self) -> Result<(), CtrlErr> {
         match self {
             Placement::Void => Ok(()),
-            Placement::Landform(_) => Err("Can sow sow on a tile with Natural"),
-            Placement::Building(_) => Err("Can not sow on a Building."),
-            Placement::Foundation(..) => Err("Can not sow on a Foundation."),
+            other => Err(CtrlErr::WrongPlacement(self.clone()))
         }
     }
 
-    pub fn sow(&mut self) -> Result<(), &'static str> {
+    pub fn sow(&mut self) -> Result<(), CtrlErr> {
         self.can_sow()?;
         *self = Placement::Landform(Natural::Farm);
         Ok(())
     }
 
-    pub(super) fn can_build(&self) -> Result<(), &'static str> {
+    pub(super) fn can_build(&self) -> Result<(), CtrlErr> {
         if let Placement::Foundation(..) = self {
             Ok(())
         }else{
-            Err("Can only build on Foundation")
+            Err(CtrlErr::WrongPlacement(self.clone()))
         }
     }
 
-    pub(super) fn build(&mut self) -> Result<bool, &'static str> {
+    pub(super) fn build(&mut self) -> Result<bool, CtrlErr> {
         self.can_build()?;
         if let Placement::Foundation(m, p) = self {
             *p += 1;

@@ -8,7 +8,7 @@ fn refuse(txt: &str) {
     println!("{}Refuse : {}{}", RED, txt, RESET);
 }
 
-enum CtrlErr {
+pub enum CtrlErr {
     WrongTerrian(Terrian),
     WrongPlacement(Placement),
     LackResource(Resource),
