@@ -81,6 +81,18 @@ impl Game {
         self.show();
     }
 
+    pub(super) fn cmd_work(&mut self) {
+        if let Err(CtrlErr::WrongPlacement(_)) = self.board().king_can_pick() {
+            if let Err(CtrlErr::WrongPlacement(p)) = self.board().king_can_saw() {
+                refuse_err(&CtrlErr::WrongPlacement(p.clone()), "pick/saw");
+            }else{
+                self.cmd_saw();
+            }
+        }else{
+            self.cmd_pick();
+        }
+    }
+
     pub(super) fn cmd_end(&mut self) {
         self.update();
         self.board_mut().king_end();
