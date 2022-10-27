@@ -35,7 +35,7 @@ impl ScaleMap {
                     }
                 }
             }
-            
+            let consider_pos = next_pos;
         }
         this
     }
