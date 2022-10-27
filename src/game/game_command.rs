@@ -71,6 +71,19 @@ impl Game {
         self.show();
     }
 
+    pub(super) fn cmd_build_to_finish(&mut self) {
+        if let Err(e) = self.board().king_can_build(){
+            refuse_err(&e, "build");
+            return;
+        }
+        self.update();
+        self.board_mut().king_build().expect("panic in king build");
+        while let Ok(_) = self.board().king_can_build(){
+            self.board_mut().king_build().expect("panic in king build");
+        }
+        self.show();
+    }
+    
     pub(super) fn cmd_saw(&mut self) {
         if let Err(e) = self.board().king_can_saw(){
             refuse_err(&e, "saw");
@@ -83,8 +96,12 @@ impl Game {
 
     pub(super) fn cmd_work(&mut self) {
         if let Err(CtrlErr::WrongPlacement(_)) = self.board().king_can_pick() {
-            if let Err(CtrlErr::WrongPlacement(p)) = self.board().king_can_saw() {
-                refuse_err(&CtrlErr::WrongPlacement(p.clone()), "pick/saw");
+            if let Err(CtrlErr::WrongPlacement(_)) = self.board().king_can_saw() {
+                if let Err(CtrlErr::WrongPlacement(p)) = self.board().king_can_build() {
+                    refuse_err(&CtrlErr::WrongPlacement(p.clone()), "pick/saw/build");
+                }else{
+                    self.cmd_build();
+                }
             }else{
                 self.cmd_saw();
             }

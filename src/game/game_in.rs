@@ -21,12 +21,10 @@ impl Game {
             "w" => self.cmd_move(&Dir::UR),
             "fh" => self.cmd_found(Manmade::Hovel),
             "fs" => self.cmd_found(Manmade::Sawmill),
-            "b" => self.cmd_build(),
+            "b" => self.cmd_build_to_finish(),
             "e" => self.cmd_end(),
             "u" => self.cmd_undo(),
-            "p" => self.cmd_pick(),
-            "m" => self.cmd_saw(),
-            "k" => self.cmd_work(),
+            "p" => self.cmd_work(),
             _ => self.cmd_invalid(),
         };
     }
