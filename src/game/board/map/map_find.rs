@@ -1,5 +1,6 @@
 use super::Map;
 
+#[derive(Eq, PartialEq, Hash)]
 pub enum Dir {
     R,
     DR,
@@ -9,7 +10,20 @@ pub enum Dir {
     UR,
 }
 
-#[derive(Clone)]
+impl Dir {
+    pub fn anti(&self) -> Dir {
+        match self {
+            Dir::R => Dir::L,
+            Dir::DR => Dir::UL,
+            Dir::DL => Dir::UR,
+            Dir::L => Dir::R,
+            Dir::UL => Dir::DR,
+            Dir::UR => Dir::DL,
+        }
+    }
+}
+
+#[derive(Clone, Eq, PartialEq, Hash)]
 pub struct Pos {
     r: i64,
     c: i64,
@@ -24,11 +38,7 @@ impl Pos {
         let i = self.r * n_col + self.c;
         i.try_into().unwrap()
     }
-
-    pub fn eq(&self, pos: &Pos) -> bool {
-        self.r == pos.r && self.c == pos.c
-    }
-
+    
     pub fn get(&self) -> (i64, i64) {
         (self.r, self.c)
     }

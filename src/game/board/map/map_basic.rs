@@ -18,4 +18,12 @@ impl Map {
     pub(super) fn adj_tiles(&self, pos: &Pos) -> Vec<&Tile> {
         self.to_tiles(&self.find_adjs(pos))
     }
+
+    pub fn get_n_row(&self) -> i64 {
+        self.n_row
+    }
+
+    pub fn get_n_col(&self) -> i64 {
+        self.n_col
+    }
 }
