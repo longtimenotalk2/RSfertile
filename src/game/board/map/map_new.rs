@@ -2,6 +2,7 @@ use super::map_find::Pos;
 use super::tile::entity::{Manmade, Natural, Placement, Terrian};
 use super::Map;
 use super::Tile;
+use std::collections::HashMap;
 
 impl Map {
     pub fn new(n_row: i64, n_col: i64) -> Self {
@@ -10,6 +11,7 @@ impl Map {
             n_col,
             tiles: vec![Tile::new(); (n_row * n_col).try_into().unwrap()],
             hovels_pos: vec![],
+            scales: HashMap::new(),
         }
     }
 

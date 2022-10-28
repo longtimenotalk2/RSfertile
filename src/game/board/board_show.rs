@@ -35,4 +35,11 @@ impl Board {
     pub fn show_distance(&self, target_pos: &Pos) {
         self.map.show_distance(target_pos);
     }
+
+    pub fn show_scale_test(&mut self) {
+        let pos = Pos::new(2, 2);
+        self.map.insert_scale(&pos);
+        let scale = self.map.get_scale(&pos).unwrap();
+        self.map.show_scale(scale);
+    }
 }

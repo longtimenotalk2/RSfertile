@@ -1,6 +1,7 @@
 use super::map_find::Pos;
 use super::tile::entity::{Manmade, Natural, Placement, Terrian};
 use super::Map;
+use super::map_search::Scale;
 use crate::constant::*;
 
 // https://fuhao.xiao84.com/86855.html
@@ -17,6 +18,7 @@ const RESET: &str = "\u{1b}[m";
 pub enum ShowStyle {
     Default(Pos),
     Distance(Pos),
+    MVCost(Scale),
 }
 
 impl Map {
@@ -39,11 +41,25 @@ impl Map {
         let d = self.distance(pos, target_pos);
         print!("{}", d);
     }
+
+    fn print_mvcost(&self, pos : &Pos, scale : &Scale) {
+        match scale.get(pos) {
+            Some(mc) => {
+                if mc > 9. {
+                    print!("+");
+                }else{
+                    print!("{}", mc);
+                }
+            },
+            None => print!("{}{}{}", RED,"x", RESET)
+        }
+    }
     
     fn show_middle(&self, pos: &Pos, style: &ShowStyle) {
         match style {
             ShowStyle::Default(kp) => self.print_default(pos, kp),
             ShowStyle::Distance(tp) => self.print_distance(pos, tp),
+            ShowStyle::MVCost(scale) => self.print_mvcost(pos, scale),
         }
     }
     
@@ -114,8 +130,6 @@ impl Map {
                 let pos = Pos::new(row, col);
                 // TILE BLOCK
                 self.show_tile(&pos, style);
-                // ;
-                // print!("{}  ", self.distance(&Pos::new(row, col), &Pos::new(3,4)));
                 print!("│");
             }
             print!("\n");
@@ -167,5 +181,9 @@ impl Map {
 
     pub fn show_distance(&self, target_pos: &Pos) {
         self.show_frame(&ShowStyle:: Distance(target_pos.clone()));
+    }
+
+    pub fn show_scale(&self, scale : &Scale) {
+        self.show_frame(&ShowStyle::MVCost(scale.clone()))
     }
 }

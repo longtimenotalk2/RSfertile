@@ -7,8 +7,10 @@ pub mod map_show;
 pub mod map_search;
 pub mod tile;
 
-use super::map::map_find::Pos;
-use super::map::tile::Tile;
+use map_find::Pos;
+use tile::Tile;
+use map_search::Scale;
+use std::collections::HashMap;
 
 #[derive(Clone)]
 pub struct Map {
@@ -16,4 +18,5 @@ pub struct Map {
     n_col: i64,
     tiles: Vec<Tile>,
     hovels_pos: Vec<Pos>,
+    scales : HashMap<Pos, Scale>,
 }

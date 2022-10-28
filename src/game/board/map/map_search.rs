@@ -2,16 +2,17 @@ use super::Map;
 use super::map_find::{Pos, Dir};
 use std::collections::HashMap;
 
-struct ScaleMap {
+#[derive(Clone)]
+pub struct Scale {
     n_row : i64,
     n_col : i64,
     target : Pos,
     mvcost_map : Vec<Option<f64>>,
 }
 
-impl ScaleMap {
+impl Scale {
     pub fn new(target : &Pos, map : &Map) -> Self {
-        let mut this = ScaleMap {
+        let mut this = Scale {
             n_row : map.get_n_row(),
             n_col : map.get_n_col(),
             target : target.clone(),
@@ -19,28 +20,31 @@ impl ScaleMap {
         };
 
         this.set(target, 0.);
-        let consider_pos = vec![target.clone()];
+        let mut consider_pos = vec![target.clone()];
         while consider_pos.len() > 0 {
+        // for i in 0..15 {
             let mut next_pos : Vec<Pos>= vec![];
             for pos in &consider_pos {
+                let mvcost_start = this.get(pos).unwrap();
                 for (p, mvcost) in  map.hash_target_dir2mvcost(pos).iter() {
+                    let mvcost_sum = mvcost_start + *mvcost;
                     if let Some(mcnow) = this.get(&p) {
-                        if mvcost < &mcnow {
-                            this.set(&p, *mvcost);
+                        if mvcost_sum < mcnow {
+                            this.set(&p, mvcost_sum);
                             next_pos.push(p.clone())
                         }
                     }else{
-                        this.set(&p, *mvcost);
+                        this.set(&p, mvcost_sum);
                         next_pos.push(p.clone())
                     }
                 }
             }
-            let consider_pos = next_pos;
+            consider_pos = next_pos;
         }
         this
     }
 
-    fn get(&self, pos : &Pos) -> Option<f64> {
+    pub fn get(&self, pos : &Pos) -> Option<f64> {
         self.mvcost_map[pos.into_usize(self.n_col)]
     }
 
@@ -61,4 +65,20 @@ impl Map {
         }
         hm
     }
+
+    pub fn insert_scale(&mut self, target : &Pos) {
+        self.scales.insert(target.clone(), Scale::new(target, self));
+    }
+
+    pub fn get_scale(&self, target : &Pos) -> Option<&Scale> {
+        self.scales.get(target)
+    }
+
+    pub fn get_scale_hard(&mut self, target : &Pos) -> &Scale {
+        if !self.scales.contains_key(target) {
+            self.insert_scale(target);
+        }
+        self.get_scale(target).unwrap()
+    }
+    
 }

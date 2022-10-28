@@ -23,7 +23,7 @@ impl Dir {
     }
 }
 
-#[derive(Clone, Eq, PartialEq, Hash)]
+#[derive(Clone, Eq, PartialEq, Hash, Debug)]
 pub struct Pos {
     r: i64,
     c: i64,

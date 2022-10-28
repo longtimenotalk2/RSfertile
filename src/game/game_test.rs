@@ -4,7 +4,7 @@ use super::Game;
 impl Game {
     pub fn test(&mut self) {
         self.show();
-        // self.board().show_distance(&Pos::new(3,4));
-        self.main_loop();
+    self.board_mut().show_scale_test();
+        //self.main_loop();
     }
 }
