@@ -22,7 +22,6 @@ impl Scale {
         this.set(target, 0.);
         let mut consider_pos = vec![target.clone()];
         while consider_pos.len() > 0 {
-        // for i in 0..15 {
             let mut next_pos : Vec<Pos>= vec![];
             for pos in &consider_pos {
                 let mvcost_start = this.get(pos).unwrap();
@@ -66,7 +65,7 @@ impl Map {
         hm
     }
 
-    pub fn insert_scale(&mut self, target : &Pos) {
+    fn insert_scale(&mut self, target : &Pos) {
         self.scales.insert(target.clone(), Scale::new(target, self));
     }
 
@@ -74,11 +73,11 @@ impl Map {
         self.scales.get(target)
     }
 
-    pub fn get_scale_hard(&mut self, target : &Pos) -> &Scale {
-        if !self.scales.contains_key(target) {
-            self.insert_scale(target);
+    pub fn check_insert_scale(&mut self, target : &Pos) {
+        if self.scales.contains_key(target) {
+            ()
+        }else{
+            self.insert_scale(target)
         }
-        self.get_scale(target).unwrap()
     }
-    
 }

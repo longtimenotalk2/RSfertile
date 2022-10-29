@@ -95,6 +95,7 @@ impl Board {
 
     pub fn king_found(&mut self, manmade: Manmade) -> Result<(), CtrlErr> {
         self.map.found(&self.king.get_pos(), manmade)?;
+        self.new_plan(&self.king.get_pos().clone());
         self.pass_cp(C_I);
         Ok(())
     }
@@ -121,8 +122,10 @@ impl Board {
         self.king_can_build()?;
         self.king.use_food().unwrap();
         self.king.use_wood().unwrap();
+        let result = self.map.build(&self.king.get_pos());
+        self.finish_plan(&self.king.get_pos().clone());
         self.pass_cp(C_I);
-        self.map.build(&self.king.get_pos())
+        result
     }
 
     pub fn king_can_saw(&self) -> Result<(), CtrlErr> {

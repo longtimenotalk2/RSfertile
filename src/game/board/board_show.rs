@@ -16,6 +16,11 @@ const RESET: &str = "\u{1b}[m";
 impl Board {
     pub fn show_adv(&self) {
         self.map.show_adv(self.king.get_pos());
+        // Plans now
+        for (i, plan) in self.get_plans().iter().enumerate() {
+            println!("Plan_{} : ({}, {})", {i}, plan.get().0, plan.get().1);
+        }
+        
         // Turn and power
         println!(
             "Turn : {} ({}/{}), Power Sum : {}",
@@ -32,14 +37,14 @@ impl Board {
         )
     }
 
-    pub fn show_distance(&self, target_pos: &Pos) {
-        self.map.show_distance(target_pos);
-    }
+    // pub fn show_distance(&self, target_pos: &Pos) {
+    //     self.map.show_distance(target_pos);
+    // }
 
-    pub fn show_scale_test(&mut self) {
-        let pos = Pos::new(2, 2);
-        self.map.insert_scale(&pos);
-        let scale = self.map.get_scale(&pos).unwrap();
-        self.map.show_scale(scale);
-    }
+    // pub fn show_scale_test(&mut self) {
+    //     let pos = Pos::new(2, 2);
+    //     self.map.check_insert_scale(&pos);
+    //     let scale = self.map.get_scale(&pos).unwrap();
+    //     self.map.show_scale(scale);
+    // }
 }
