@@ -123,7 +123,10 @@ impl Board {
         self.king.use_food().unwrap();
         self.king.use_wood().unwrap();
         let result = self.map.build(&self.king.get_pos());
-        self.finish_plan(&self.king.get_pos().clone());
+        
+        if let Ok(true ) = result {
+            self.finish_plan(&self.king.get_pos().clone());
+        }
         self.pass_cp(C_I);
         result
     }

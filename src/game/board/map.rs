@@ -4,12 +4,12 @@ pub mod map_find;
 pub mod map_hovel;
 pub mod map_new;
 pub mod map_show;
-pub mod map_search;
+pub mod map_scale;
 pub mod tile;
 
 use map_find::Pos;
 use tile::Tile;
-use map_search::Scale;
+use map_scale::Scale;
 use std::collections::HashMap;
 
 #[derive(Clone)]

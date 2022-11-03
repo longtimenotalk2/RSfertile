@@ -1,7 +1,7 @@
 use super::map_find::Pos;
 use super::tile::entity::{Manmade, Natural, Placement, Terrian};
 use super::Map;
-use super::map_search::Scale;
+use super::map_scale::Scale;
 use crate::constant::*;
 
 // https://fuhao.xiao84.com/86855.html
