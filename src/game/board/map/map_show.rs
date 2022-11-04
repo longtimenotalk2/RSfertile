@@ -15,10 +15,10 @@ const UYELLOW: &str = "\u{1b}[4;33m";
 const BLUE: &str = "\u{1b}[34m";
 const RESET: &str = "\u{1b}[m";
 
-pub enum ShowStyle {
-    Default(Pos),
-    Distance(Pos),
-    MVCost(Scale),
+pub enum ShowStyle<'a> {
+    Default(&'a Pos),
+    Distance(&'a Pos),
+    MVCost(&'a Scale),
 }
 
 impl Map {
@@ -175,15 +175,15 @@ impl Map {
     }
 
     pub fn show_adv(&self, king_pos: &Pos) {
-        self.show_frame(&ShowStyle::Default(king_pos.clone()));
+        self.show_frame(&ShowStyle::Default(king_pos));
         self.show_hovels();
     }
 
     pub fn show_distance(&self, target_pos: &Pos) {
-        self.show_frame(&ShowStyle:: Distance(target_pos.clone()));
+        self.show_frame(&ShowStyle:: Distance(target_pos));
     }
 
     pub fn show_scale(&self, scale : &Scale) {
-        self.show_frame(&ShowStyle::MVCost(scale.clone()))
+        self.show_frame(&ShowStyle::MVCost(scale))
     }
 }
