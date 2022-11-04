@@ -73,11 +73,13 @@ impl Map {
         self.scales.get(target)
     }
 
-    pub fn check_insert_scale(&mut self, target : &Pos) {
+    pub fn check_insert_scale(&mut self, target : &Pos) -> &Scale {
         if self.scales.contains_key(target) {
             ()
         }else{
             self.insert_scale(target)
         }
+        self.get_scale(target).unwrap()
     }
+    
 }

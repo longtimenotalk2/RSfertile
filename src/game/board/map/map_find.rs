@@ -34,6 +34,13 @@ impl Pos {
         Self { r, c }
     }
 
+    pub fn from_usize(u : usize, n_col : i64) -> Self {
+        Self {
+            r : u as i64 / n_col,
+            c : u as i64 % n_col,
+        }
+    }
+
     pub fn into_usize(&self, n_col: i64) -> usize {
         let i = self.r * n_col + self.c;
         i.try_into().unwrap()
