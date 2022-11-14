@@ -11,7 +11,6 @@ impl Map {
             n_col,
             tiles: vec![Tile::new(); (n_row * n_col).try_into().unwrap()],
             hovels_pos: vec![],
-            scales: HashMap::new(),
         }
     }
 

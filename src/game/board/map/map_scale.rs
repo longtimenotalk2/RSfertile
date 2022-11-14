@@ -65,21 +65,8 @@ impl Map {
         hm
     }
 
-    fn insert_scale(&mut self, target : &Pos) {
-        self.scales.insert(target.clone(), Scale::new(target, self));
-    }
-
-    pub fn get_scale(&self, target : &Pos) -> Option<&Scale> {
-        self.scales.get(target)
-    }
-
-    pub fn check_insert_scale(&mut self, target : &Pos) -> &Scale {
-        if self.scales.contains_key(target) {
-            ()
-        }else{
-            self.insert_scale(target)
-        }
-        self.get_scale(target).unwrap()
+    pub fn get_scale(&self, target : &Pos) -> Scale {
+        Scale::new(target, self)
     }
     
 }

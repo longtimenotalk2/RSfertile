@@ -19,5 +19,4 @@ pub struct Map {
     n_col: i64,
     tiles: Vec<Tile>,
     hovels_pos: Vec<Pos>,
-    scales : HashMap<Pos, Scale>,
 }
