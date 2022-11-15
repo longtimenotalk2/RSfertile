@@ -33,6 +33,16 @@ impl Map {
         }
         list
     }
+
+    fn saw_pos_list(&self) -> Vec<Pos> {
+        let mut list = vec!();
+        for (pos, tile) in self.all_tiles_with_pos() {
+            if let Ok(()) = tile.can_saw() {
+                list.push(pos);
+            }
+        }
+        list
+    }
     
     fn search_food(&self, target : &Pos) -> Option<(f64, Map)> {
         let scale = self.get_scale(target);
@@ -52,4 +62,25 @@ impl Map {
             None
         }
     }
+
+    fn search_wood(&self, target : &Pos) -> Option<(f64, Map)> {
+        let scale = self.get_scale(target);
+        let mut hm = HashMap::new();
+        for pos in self.saw_pos_list() .iter() {
+            if let Some(mv_w) = scale.get(pos) {
+                if let Some((mv_f, map_f)) = self.search_food(pos) {
+                    hm.insert(pos.clone(), mv_w + mv_f);
+                }
+            }
+        }
+
+        if let Some((pos, mvcost)) = find_min(&hm) {
+            let (_, mut map_new) = self.search_food(&pos).unwrap();
+            map_new.saw(&pos).unwrap();
+            Some((mvcost, map_new))
+        }else{
+            None
+        }
+    }
+
 }
