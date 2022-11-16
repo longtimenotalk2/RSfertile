@@ -23,11 +23,12 @@ impl Board {
         
         // Turn and power
         println!(
-            "Turn : {} ({}/{}), Power Sum : {}",
+            "Turn : {} ({}/{}), Power per turn : {}, Power now : {}",
             self.turn,
             self.cp as f64 / C_F,
             MAX_CP / C_I,
-            self.map.get_all_power()
+            self.map.get_all_power(),
+            self.manpower.now(),
         );
         // Inventory
         println!(

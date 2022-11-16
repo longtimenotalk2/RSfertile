@@ -16,8 +16,6 @@ impl Program {
     }
 
     fn delete(&mut self, pos: &Pos) {
-        dbg!(&pos);
-        dbg!(&self.plans);
         let index = self.plans.iter().position(|x| x == pos).unwrap();
         self.plans.remove(index);
     }

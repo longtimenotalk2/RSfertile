@@ -10,6 +10,10 @@ impl ManPower {
     pub fn new() -> Self {
         Self { power_total: 0 }
     }
+
+    pub fn now(&self) -> i64 {
+        self.power_total
+    }
     
     pub fn enough(&self, power : i64) -> Result<(), CtrlErr> {
         if power <= self.power_total {
@@ -19,11 +23,11 @@ impl ManPower {
         }
     }
 
-    pub fn inject(&mut self, power : i64) {
+    pub(super) fn inject(&mut self, power : i64) {
         self.power_total += power;
     }
 
-    pub fn employ(&mut self, power : i64) -> Result<(), CtrlErr> {
+    pub(super) fn employ(&mut self, power : i64) -> Result<(), CtrlErr> {
         self.enough(power)?;
         self.power_total -= power;
         Ok(())

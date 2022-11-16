@@ -5,6 +5,7 @@ use crate::constant::*;
 impl Board {
     fn start_turn(&mut self) {
         self.turn += 1;
+        self.manpower.inject(self.get_all_power());
         self.map.refresh_all();
     }
 
