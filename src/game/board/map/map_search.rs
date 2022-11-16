@@ -83,4 +83,16 @@ impl Map {
         }
     }
 
+    pub(super) fn search_build(&self, target : &Pos) -> Option<(f64, Map)> {
+        if let Some((mv1, map1)) = self.search_wood(target) {
+            if let Some((mv2, map2)) = map1.search_food(target) {
+                Some((mv1+mv2, map2))
+            }else{
+                None
+            }
+        }else{
+            None
+        }
+    }
+
 }
