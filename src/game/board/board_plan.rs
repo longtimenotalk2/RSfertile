@@ -25,8 +25,8 @@ impl Program {
         &self.plans
     }
 
-    fn first_plan(&self) -> Option<&Pos> {
-        self.plans.get(0)
+    fn first_plan(&self) -> Option<Pos> {
+        self.plans.get(0).map(|i| i.clone())
     }
 }
 
@@ -64,7 +64,10 @@ impl Board {
         result
     }
 
-    pub(super) fn plan_main(&mut self) {
-        
+    pub(super) fn plan_main(&mut self) -> Result<(), CtrlErr>{
+        while let Some(pos) = self.program.first_plan() {
+            self.do_plan(&pos)?;
+        }
+        Ok(())
     }
 }

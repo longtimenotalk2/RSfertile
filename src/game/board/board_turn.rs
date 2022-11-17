@@ -10,6 +10,7 @@ impl Board {
     }
 
     fn end_turn(&mut self) {
+        self.plan_main();
         if self.turn % 4 == 0 {
             self.map.sow_all();
         }
