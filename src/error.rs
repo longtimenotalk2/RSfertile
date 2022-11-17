@@ -14,6 +14,7 @@ pub enum CtrlErr {
     WrongPlacement(Placement),
     LackResource(Resource),
     LackPower(i64, i64),
+    NoTarget,
     Consumed,
     OOBoundary,
 }
@@ -29,6 +30,7 @@ impl CtrlErr {
             CtrlErr::LackPower(i1, i2) => format!("Can not {}, need {} power but {} remained", action, i1, i2),
             CtrlErr::Consumed => format!("Can not {}, corresponding tile is consumed", action),
             CtrlErr::OOBoundary => format!("Can not {} to target, out of boundary", action),
+            _ => "NAN".to_string(),
         }
     }
 }
