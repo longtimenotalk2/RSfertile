@@ -45,7 +45,7 @@ impl Board {
 
     fn try_plan(&self, pos : &Pos) -> Result<i64, CtrlErr> {
         if let Some((mvcost, map_new)) = self.map.search_build(pos) {
-            let pwcost = mvcost as i64 + 2;
+            let pwcost = mvcost as i64 + 3;
             self.manpower.enough(pwcost).map(|i| pwcost)
         }else{
             Err(CtrlErr::NoTarget)
@@ -57,16 +57,18 @@ impl Board {
         let (mvcost, map_new) = self.map.search_build(pos).unwrap();
         self.manpower.employ(pwcost).unwrap();
         self.map = map_new;
-        let result = self.map.build(&self.king.get_pos());
+        let result = self.map.build(pos);
         if let Ok(true) = result {
-            self.finish_plan(&self.king.get_pos().clone());
+            self.finish_plan(pos);
         }
+        self.map.show_adv(self.king.get_pos());
+        println!("cost {} pw", pwcost);
         result
     }
 
     pub(super) fn plan_main(&mut self) -> Result<(), CtrlErr>{
         while let Some(pos) = self.program.first_plan() {
-            self.do_plan(&pos)?;
+            self.do_plan(&pos)?; 
         }
         Ok(())
     }
