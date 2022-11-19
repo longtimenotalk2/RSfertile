@@ -1,6 +1,7 @@
 use super::map::map_find::Pos;
 use super::Board;
 use crate::error::CtrlErr;
+use super::map::map_search::TransNote;
 
 #[derive(Clone)]
 pub struct Program {
@@ -44,7 +45,7 @@ impl Board {
     }
 
     fn try_plan(&self, pos : &Pos) -> Result<i64, CtrlErr> {
-        if let Some((mvcost, map_new)) = self.map.search_build(pos) {
+        if let Some((mvcost, map_new, _)) = self.map.search_build(pos) {
             let pwcost = mvcost as i64 + 3;
             self.manpower.enough(pwcost).map(|i| pwcost)
         }else{
@@ -54,7 +55,7 @@ impl Board {
 
     fn do_plan(&mut self, pos : &Pos) -> Result<bool, CtrlErr> {
         let pwcost = self.try_plan(pos)?;
-        let (mvcost, map_new) = self.map.search_build(pos).unwrap();
+        let (mvcost, map_new, trans_note_list) = self.map.search_build(pos).unwrap();
         self.manpower.employ(pwcost).unwrap();
         self.map = map_new;
         let result = self.map.build(pos);
@@ -63,6 +64,9 @@ impl Board {
         }
         self.map.show_adv(self.king.get_pos());
         println!("cost {} pw", pwcost);
+        for trans_note in trans_note_list {
+            println!("- {}", trans_note.str());
+        }
         result
     }
 

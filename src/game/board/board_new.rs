@@ -15,7 +15,7 @@ impl Board {
             map: Map::new_std(),
             turn: 1,
             cp: 0,
-            king: King::new(Pos::new(1, 1)),
+            king: King::new(Pos::new(1, 3)),
             program: Program::new(),
             manpower: ManPower::new(),
         }

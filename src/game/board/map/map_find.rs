@@ -49,6 +49,10 @@ impl Pos {
     pub fn get(&self) -> (i64, i64) {
         (self.r, self.c)
     }
+
+    pub fn str(&self) -> String {
+        format!("({}, {})", self.r, self.c)
+    }
 }
 
 impl Map {
