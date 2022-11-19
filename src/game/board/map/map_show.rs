@@ -111,7 +111,14 @@ impl Map {
     }
 
     fn show_frame(&self, style: &ShowStyle) {
+        // col num
+        for c in 0..self.n_col {
+            print!("   {}", c);
+        }
+        print!("\n");
+        
         // first line
+        print!(" "); // row num
         print!("┌───");
         for _col in 0..self.n_col - 1 {
             print!("┬───");
@@ -120,6 +127,7 @@ impl Map {
         // others line
         for row in 0..self.n_row {
             //// 1line
+            print!("{}", row); // row num
             // leftest block
             if row % 2 == 1 {
                 print!("  ");
@@ -134,6 +142,7 @@ impl Map {
             }
             print!("\n");
             //// 2line
+            print!(" "); // row num
             if row < self.n_row - 1 {
                 if row % 2 == 0 {
                     print!("└");
