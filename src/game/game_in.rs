@@ -12,7 +12,8 @@ fn refuse(txt: &str) {
 
 impl Game {
     fn parse_cmd(&mut self, cmd: &str) {
-        match cmd.trim() {
+        let cmd = cmd.trim();
+        match cmd {
             "s" => self.cmd_move(&Dir::R),
             "x" => self.cmd_move(&Dir::DR),
             "z" => self.cmd_move(&Dir::DL),
@@ -25,7 +26,15 @@ impl Game {
             "e" => self.cmd_end(),
             "u" => self.cmd_undo(),
             "p" => self.cmd_work(),
-            _ => self.cmd_invalid(),
+            _ => {
+                if let Some(num) = cmd.strip_prefix("e").and_then(|s| s.parse::<i64>().ok()) {
+                    for i in 0..num {
+                        self.cmd_end();
+                    }
+                }else{
+                    self.cmd_invalid()
+                }
+            },
         };
     }
 
