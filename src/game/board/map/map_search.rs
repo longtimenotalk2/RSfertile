@@ -4,22 +4,14 @@ use super::map_scale::Scale;
 use super::tile::entity::Resource;
 use std::collections::HashMap;
 
-fn find_min(hm : &HashMap<Pos, f64>) -> Option<(Pos, f64)> {
-    let mut vmin = -1.0;
-    let mut rpos = Pos::new(0, 0);
-    let mut c = 0;
+fn find_min(hm : &HashMap<Pos, f64>) -> Option<(&Pos, f64)> {
+    let mut result : Option<(&Pos, f64)> = None;
     for (pos, v) in hm.iter() {
-        if vmin == -1.0 || *v < vmin {
-            c += 1;
-            vmin = *v;
-            rpos = pos.clone();
+        if result.is_none() || *v < result.unwrap().1 {
+            result = Some((pos, *v))
         }
     }
-    if c == 0 {
-        None
-    }else{
-        Some((rpos, vmin))
-    }
+    result
 }
 
 #[derive(Clone)]
@@ -82,8 +74,8 @@ impl Map {
 
         if let Some((pos, mvcost)) = find_min(&hm_pos_mv) {
             let mut map_new = self.clone();
-            map_new.pick(&pos).unwrap();
-            let transnote = TransNote::new(&pos, target, &Resource::Food, mvcost);
+            map_new.pick(pos).unwrap();
+            let transnote = TransNote::new(pos, target, &Resource::Food, mvcost);
             Some((mvcost, map_new, vec![transnote]))
         }else{
             None
@@ -102,10 +94,10 @@ impl Map {
         }
 
         if let Some((pos, mvcost)) = find_min(&hm) {
-            let (_, mut map_new, mut trans_note) = self.search_food(&pos).unwrap();
+            let (_, mut map_new, mut trans_note) = self.search_food(pos).unwrap();
             map_new.saw(&pos).unwrap();
             let cost_behind = trans_note[0].get_cost();
-            trans_note.push(TransNote::new(&pos, target, &Resource::Wood, mvcost-cost_behind));
+            trans_note.push(TransNote::new(pos, target, &Resource::Wood, mvcost-cost_behind));
             Some((mvcost, map_new, trans_note))
         }else{
             None
