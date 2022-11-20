@@ -112,19 +112,54 @@ impl Map {
         }
     }
 
-    pub fn search_build(&self, target : &Pos) -> Option<(f64, Map, Vec<TransNote>)> {
-        if let Some((mv1, map1, trans_wood_note)) = self.search_wood(target) {
-            if let Some((mv2, map2, trans_food_note)) = map1.search_food(target) {
-                let mut trans_note_list = vec![];
-                trans_note_list.extend_from_slice(&trans_wood_note);
-                trans_note_list.extend_from_slice(&trans_food_note);
-                Some((mv1+mv2, map2, trans_note_list))
-            }else{
-                None
+    fn search_by_order(&self, target : &Pos, item_list : &[Resource]) -> Option<(f64, Map, Vec<TransNote>)> {
+        let mut mvcost = 0.;
+        let mut map_now : Option<Map> = None;
+        let mut trans_note = vec![];
+        
+        for item in item_list {
+            match item {
+                Resource::Food => {
+                    if let Some((mv, map, list)) = self.search_food(target) {
+                        mvcost += mv;
+                        map_now = Some(map);
+                        trans_note.extend_from_slice(&list);
+                    }else{
+                        return None;
+                    }
+                },
+                Resource::Wood => {
+                    if let Some((mv, map, list)) = self.search_wood(target) {
+                        mvcost += mv;
+                        map_now = Some(map);
+                        trans_note.extend_from_slice(&list);
+                    }else{
+                        return None;
+                    }
+                },
+                _ => return None,
             }
+        }
+        if let Some(map) = map_now{
+            Some((mvcost, map, trans_note))
         }else{
             None
         }
     }
 
+    pub fn search_build(&self, target : &Pos) -> Option<(f64, Map, Vec<TransNote>)> {
+        if let Some((mvcost1, map1, trans_note1)) = self.search_by_order(target, &[Resource::Wood, Resource::Food]) {
+            if let Some((mvcost2, map2, trans_note2)) = self.search_by_order(target, &[Resource::Food, Resource::Wood]) {
+                if mvcost1 < mvcost2 {
+                    Some((mvcost1, map1, trans_note1))
+                }else{
+                    Some((mvcost2, map2, trans_note2))
+                }
+            }else{
+                Some((mvcost1, map1, trans_note1))
+            }
+        }else{
+            self.search_by_order(target, &[Resource::Food, Resource::Wood])
+        }
+    }
 }
