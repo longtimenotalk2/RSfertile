@@ -41,6 +41,41 @@ impl TransNote {
     }
 }
 
+#[derive(Clone)]
+pub struct WorkNote {
+    pos : Pos,
+    cost : f64,
+    action : String,
+}
+
+impl WorkNote {
+    fn new(pos : &Pos, cost : f64, action : &str) -> Self {
+        Self {
+            pos : pos.clone(),
+            cost,
+            action : action.to_string(),
+        }
+    }
+
+    pub fn str(&self) -> String {
+        format!("{} : {} at {}", self.cost, self.action, self.pos.str())
+    }
+}
+
+pub enum Note {
+    Trans(TransNote),
+    Work(WorkNote),
+}
+
+impl Note {
+    pub fn str(&self) -> String {
+        match self {
+            Note::Trans(n) => n.str(),
+            Note::Work(n) => n.str(),
+        }
+    }
+}
+
 impl Map {
     fn food_pos_list(&self) -> Vec<Pos> {
         let mut list = vec!();
@@ -69,7 +104,6 @@ impl Map {
             if let Some(mv) = scale.get(pos) {
                 hm_pos_mv.insert(pos.clone(), mv);
             }
-                
         }
 
         if let Some((pos, mvcost)) = find_min(&hm_pos_mv) {
